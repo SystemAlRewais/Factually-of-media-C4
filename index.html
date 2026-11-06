@@ -24,9 +24,8 @@
 
         <p id="authStatus" class="status-msg"></p>
 
-        <div style="margin-top: 15px; display: flex; justify-content: space-between; font-size: 13px;">
-            <a href="register.html" style="color: #10b981; text-decoration: none; font-weight: bold;">📝 إنشاء حساب جديد للطالب</a>
-            <a href="admin-select.html" style="color: #38bdf8; text-decoration: none; font-weight: bold;">🔐 بوابة الإدارة العليا</a>
+        <div style="margin-top: 15px; text-align: center;">
+            <a href="admin-select.html" style="font-size: 13px; color: #38bdf8; text-decoration: none; font-weight: bold;">🔐 بوابة الإدارة العليا وخيار إنشاء الحسابات</a>
         </div>
     </div>
 
@@ -39,18 +38,11 @@
 
             if (!id || !pass) { alert("يرجى إدخال البيانات!"); return; }
 
-            // الحساب التجريبي الخاص بك (مخفي برمجياً فقط)
-            if (id === "admin" && pass === "5656") {
-                localStorage.setItem('currentUser', JSON.stringify({ id: "5656", name: "أحمد سمير", grade: "الفرقة الأولى", phone: "01000000000" }));
-                window.location.href = "student.html";
-                return;
-            }
-
             statusEl.style.color = "#38bdf8";
             statusEl.textContent = "⏳ جاري التحقق سحابياً...";
 
             try {
-                const res = await fetch(`${googleScriptUrl}?action=loginStudent&id=${id}&pass=${pass}`);
+                const res = await fetch(`${googleScriptUrl}?action=loginStudent&id=${encodeURIComponent(id)}&pass=${encodeURIComponent(pass)}`);
                 const data = await res.json();
                 if (data.success) {
                     localStorage.setItem('currentUser', JSON.stringify(data.student));
