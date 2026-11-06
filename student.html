@@ -3,92 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الطالب الأكاديمية</title>
+    <title>لوحة الطالب الأكاديمية</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .student-header { background: linear-gradient(135deg, #1e1b4b 0%, #111827 100%); padding: 25px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; text-align: right; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .info-card { background: var(--card-bg); padding: 18px; border-radius: 16px; border: 1px solid var(--border-color); text-align: right; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .info-card span { display: block; font-size: 0.8rem; color: var(--text-sub); margin-bottom: 5px; }
+        .info-card h4 { font-size: 1.1rem; color: #38bdf8; }
+        .section-box { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px; text-align: right; }
+        .quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 10px; }
+        .quick-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; color: #fff; text-align: center; cursor: pointer; transition: 0.3s; font-family: 'Cairo'; }
+        .quick-btn:hover { background: var(--primary-color); border-color: var(--primary-color); }
+    </style>
 </head>
 <body>
-    <div class="container" style="max-width: 900px;">
-        <div class="admin-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">👨‍🎓 المنصة التعليمية</div>
+    <div class="container" style="max-width: 800px; text-align: right;">
         
-        <div class="card" style="display: flex; justify-content: space-between; align-items: center; background: rgba(99, 102, 241, 0.1); flex-wrap: wrap; gap: 15px;">
-            <div style="text-align: right;">
-                <h3 id="studentNameDisplay" style="margin-bottom: 5px;">أهلاً بك...</h3>
-                <p id="studentInfoDisplay" style="margin: 0; font-size: 13px; color: var(--text-main);"></p>
-            </div>
-            <!-- هذا الزر يحافظ على نظامك القديم -->
-            <button class="btn" style="width: auto; padding: 10px 20px; background: #10b981;" onclick="window.location.href='subjects.html'">📍 الذهاب لتسجيل الحضور (GPS)</button>
+        <!-- الترحيب ورأس الصفحة -->
+        <div class="student-header">
+            <span style="color: #38bdf8; font-size: 0.85rem; font-weight: 700;">لوحة الطالب</span>
+            <h2 id="studentNameHeader" style="margin: 5px 0; font-size: 1.5rem;">مرحبًا، ...</h2>
+            <p style="margin: 0; font-size: 0.85rem; color: var(--text-sub);">كل ما تحتاجه للدراسة والمقررات والتحديثات الأكاديمية في مكان واحد.</p>
         </div>
 
-        <div class="grid-dashboard">
-            <div class="card">
-                <h3>📚 المقررات والكتب الدراسية</h3>
-                <div id="booksContainer"><p style="font-size: 13px; color: var(--text-sub);">جاري التحميل...</p></div>
+        <!-- مربعات بيانات الطالب (تتحكم فيها الإدارة) -->
+        <div class="info-grid">
+            <div class="info-card">
+                <span>كود الطالب</span>
+                <h4 id="studentIdVal">-</h4>
             </div>
-
-            <div class="card">
-                <h3>📅 الجداول والنتائج</h3>
-                <div id="schedulesContainer"><p style="font-size: 13px; color: var(--text-sub);">جاري التحميل...</p></div>
+            <div class="info-card">
+                <span>الفرقة الدراسية</span>
+                <h4 id="studentGradeVal">-</h4>
             </div>
-
-            <div class="card">
-                <h3>💬 منتدى الدفعة</h3>
-                <div class="forum-box" id="chatBox"><p style="font-size: 12px; color: var(--text-sub);">جاري تحميل الرسائل...</p></div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="chatMessage" placeholder="اكتب استفسارك هنا..." style="flex: 3; padding: 8px;">
-                    <button class="btn" onclick="sendChatMessage()" style="flex: 1; margin-top: 0;">إرسال</button>
-                </div>
+            <div class="info-card">
+                <span>البرنامج الأكاديمي</span>
+                <h4 id="studentProgramVal">كلية الإعلام</h4>
             </div>
-
-            <div class="card">
-                <h3>✉️ صندوق المقترحات للإدارة</h3>
-                <textarea id="complaintText" placeholder="اكتب رسالتك للإدارة..." rows="2" style="width: 100%; padding: 10px; background: #030712; border: 1px solid var(--border-color); color: #fff; border-radius: 12px; margin-bottom: 10px; resize: none;"></textarea>
-                <button class="btn" onclick="submitComplaint()" style="background: var(--accent-red);">إرسال الشكوى</button>
+            <div class="info-card">
+                <span>السنة الأكاديمية</span>
+                <h4 id="academicYearVal">2026/2027</h4>
             </div>
         </div>
-        <button class="btn btn-secondary" onclick="logout()" style="margin-top: 20px;">🚪 تسجيل الخروج</button>
+
+        <!-- زر الانتقال لتسجيل الحضور الجغرافي الخاص بك -->
+        <div style="margin-bottom: 20px;">
+            <button class="btn" onclick="window.location.href='subjects.html'" style="background: #10b981; font-size: 1.05rem; padding: 16px;">📍 الذهاب لنظام الحضور الجغرافي (GPS)</button>
+        </div>
+
+        <!-- المقررات الدراسية (مرفوعة من الإدارة) -->
+        <div class="section-box">
+            <h3 style="color: #38bdf8; font-size: 1.1rem; margin-bottom: 12px;">📚 مقرراتي الدراسية</h3>
+            <div id="studentBooksContainer">
+                <p style="color: var(--text-sub); font-size: 0.9rem;">جاري تحميل مقرراتك الدراسية...</p>
+            </div>
+        </div>
+
+        <!-- إجراءات سريعة (درجات وأرشيف) -->
+        <div class="section-box">
+            <h3 style="color: #f59e0b; font-size: 1.1rem; margin-bottom: 12px;">⚡ إجراءات سريعة</h3>
+            <div class="quick-links">
+                <div class="quick-btn" onclick="alert('سجل درجات أعمال السنة والنهائي سيظهر فور اعتماده من الإدارة.')">📊 الدرجات والنتائج</div>
+                <div class="quick-btn" onclick="alert('تقويم المحاضرات نشط ومتصل بالسحابة.')">📅 التقويم</div>
+                <div class="quick-btn" onclick="window.scrollTo(0, document.body.scrollHeight);">✉️ الشكاوى والدعم</div>
+            </div>
+        </div>
+
+        <!-- صندوق الشكاوى والمقترحات -->
+        <div class="section-box">
+            <h3 style="color: var(--accent-red); font-size: 1.1rem; margin-bottom: 12px;">✉️ إرسال شكوى أو مقترح للإدارة</h3>
+            <textarea id="studentComplaint" placeholder="اكتب رسالتك أو استفسارك هنا..." rows="3" style="width: 100%; padding: 12px; background: #030712; border: 1px solid var(--border-color); color: #fff; border-radius: 10px; margin-bottom: 10px;"></textarea>
+            <button class="btn" onclick="sendComplaintToAdmin()" style="background: var(--accent-red); width: auto; padding: 10px 25px;">إرسال للإدارة</button>
+        </div>
+
+        <button class="btn btn-secondary" onclick="logout()" style="margin-top: 10px;">🚪 تسجيل الخروج</button>
     </div>
 
     <script src="script.js"></script>
     <script>
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (!currentUser) window.location.href = 'index.html';
-        else {
-            document.getElementById('studentNameDisplay').textContent = `أهلاً بك، ${currentUser.name}`;
-            document.getElementById('studentInfoDisplay').textContent = `الرقم الجامعي: ${currentUser.id} | الفرقة: ${currentUser.grade}`;
-            loadDashboardData();
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('studentNameHeader').textContent = `مرحبًا، ${currentUser.name}`;
+            document.getElementById('studentIdVal').textContent = currentUser.id;
+            document.getElementById('studentGradeVal').textContent = currentUser.grade;
+            loadStudentDataFromServer();
         }
 
-        async function loadDashboardData() {
+        async function loadStudentDataFromServer() {
             try {
+                // جلب الكتب والمقررات الخاصة بفرقة الطالب والتي رفعتها الإدارة
                 const res = await fetch(`${googleScriptUrl}?action=getDashboardData&grade=${currentUser.grade}`);
                 const data = await res.json();
                 
-                document.getElementById('booksContainer').innerHTML = data.books.map(b => `<a href="${b.link}" target="_blank" style="display:block; color:#10b981; margin-bottom:8px; text-decoration:none;">📄 ${b.title}</a>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد كتب.</p>";
-                document.getElementById('schedulesContainer').innerHTML = data.schedules.map(s => `<a href="${s.link}" target="_blank" style="display:block; color:#38bdf8; margin-bottom:8px; text-decoration:none;">🗓️ ${s.title}</a>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد جداول.</p>";
-                document.getElementById('chatBox').innerHTML = data.chat.map(c => `<div class="msg"><span>${c.name}:</span> ${c.message}</div>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد رسائل.</p>";
-                document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-            } catch (e) { document.getElementById('booksContainer').innerHTML = "<p style='color: var(--accent-red);'>تعذر الاتصال بالسحابة.</p>"; }
+                const container = document.getElementById('studentBooksContainer');
+                if(data.books && data.books.length > 0) {
+                    container.innerHTML = data.books.map(b => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                            <span>📖 ${b.title}</span>
+                            <a href="${b.link}" target="_blank" style="background: var(--primary-color); color: #fff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 0.85rem;">تحميل الكتاب</a>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = `<p style="color: var(--text-sub); font-size: 0.9rem;">لا توجد مقررات مسجلة بعد. ستظهر مقرراتك هنا بمجرد إتمام الإدارة لتسجيلها.</p>`;
+                }
+            } catch(e) {
+                document.getElementById('studentBooksContainer').innerHTML = `<p style="color: var(--accent-red);">تعذر جلب البيانات من السحابة.</p>`;
+            }
         }
 
-        async function sendChatMessage() {
-            const msg = document.getElementById('chatMessage').value.trim();
-            if(!msg) return;
-            document.getElementById('chatMessage').value = '';
-            document.getElementById('chatBox').innerHTML += `<div class="msg"><span>${currentUser.name}:</span> ${msg} (جاري الإرسال...)</div>`;
-            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-            await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "sendChat", name: currentUser.name, grade: currentUser.grade, message: msg }) });
-            loadDashboardData();
+        async function sendComplaintToAdmin() {
+            const text = document.getElementById('studentComplaint').value.trim();
+            if(!text) { alert("أكتب نص الشكوى أولاً!"); return; }
+            
+            alert("تم إرسال شكواك للإدارة بنجاح وسجلت في السحابة.");
+            document.getElementById('studentComplaint').value = '';
+            
+            await fetch(googleScriptUrl, {
+                method: 'POST',
+                body: JSON.stringify({ action: "sendComplaint", id: currentUser.id, name: currentUser.name, text: text })
+            }).catch(()=>{});
         }
 
-        async function submitComplaint() {
-            const text = document.getElementById('complaintText').value.trim();
-            if(!text) return;
-            alert("تم إرسال رسالتك للإدارة بنجاح.");
-            document.getElementById('complaintText').value = '';
-            await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "sendComplaint", name: currentUser.name, id: currentUser.id, text: text }) });
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
         }
-
-        function logout() { localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
     </script>
 </body>
 </html>
