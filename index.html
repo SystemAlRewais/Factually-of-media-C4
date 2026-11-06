@@ -3,74 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كلية الإعلام - جامعة الأزهر</title>
+    <title>كلية الإعلام - جامعة الأزهر | تسجيل الدخول</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h2>كلية الإعلام - جامعة الأزهر</h2>
-        
-        <div class="tab-buttons">
-            <button id="tabLoginBtn" class="active-tab" onclick="showTab('login')">تسجيل الدخول</button>
-            <button id="tabSignupBtn" onclick="showTab('signup')">إنشاء حساب جديد</button>
-        </div>
+        <div class="admin-badge">جامعة الأزهر - كلية الإعلام</div>
+        <h2>تسجيل الدخول للنظام الأكاديمي</h2>
+        <p>يرجى إدخال بيانات حسابك الجامعي المعتمد</p>
 
-        <div id="loginBox">
-            <div class="input-group">
-                <label>الرقم الجامعي (ID):</label>
-                <input type="text" id="loginId" placeholder="أدخل الرقم الجامعي (مثال: AZ123456)">
-            </div>
-            <div class="input-group">
-                <label>كلمة السر:</label>
-                <input type="password" id="loginPassword" placeholder="أدخل كلمة السر">
-            </div>
-            <button type="button" class="btn" onclick="login()">دخول المنصة</button>
+        <div class="input-group">
+            <label>الرقم الجامعي / اسم المستخدم:</label>
+            <input type="text" id="loginId" placeholder="أدخل الكود الخاص بك">
         </div>
-
-        <div id="signupBox" style="display: none;">
-            <div class="input-group">
-                <label>الاسم ثلاثي:</label>
-                <input type="text" id="fullname" placeholder="أدخل اسمك الثلاثي">
-            </div>
-            <div class="input-group">
-                <label>رقم التليفون:</label>
-                <input type="tel" id="phone" placeholder="01xxxxxxxx">
-            </div>
-            <div class="input-group">
-                <label>الفرقة الدراسية:</label>
-                <select id="grade">
-                    <option value="الفرقة الأولى">الفرقة الأولى</option>
-                    <option value="الفرقة الثانية">الفرقة الثانية</option>
-                    <option value="الفرقة الثالثة">الفرقة الثالثة</option>
-                    <option value="الفرقة الرابعة">الفرقة الرابعة</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>كلمة السر:</label>
-                <input type="password" id="password" placeholder="أدخل كلمة السر">
-            </div>
-            <button type="button" class="btn" onclick="createAccount()">إنشاء الحساب</button>
+        <div class="input-group">
+            <label>كلمة السر:</label>
+            <input type="password" id="loginPassword" placeholder="••••••••">
         </div>
+        <button type="button" class="btn" onclick="systemLogin()">دخول المنصة</button>
 
         <p id="authStatus" class="status-msg"></p>
 
-        <hr style="margin-top: 25px; border: 0.5px solid #1f2937;">
-        <a href="admin.html" style="font-size: 12px; color: #888; text-decoration: none; display: block; margin-top: 15px;">🔐 بوابة دكتور المادة / الإدارة</a>
+        <hr style="margin-top: 25px; border: 0.5px solid var(--border-color);">
+        <a href="admin-select.html" style="font-size: 13px; color: #38bdf8; text-decoration: none; display: block; margin-top: 15px; font-weight: bold;">🔐 بوابة الإدارة العليا</a>
     </div>
 
     <script src="script.js"></script>
     <script>
-        function showTab(tab) {
-            if(tab === 'login') {
-                document.getElementById('loginBox').style.display = 'block';
-                document.getElementById('signupBox').style.display = 'none';
-                document.getElementById('tabLoginBtn').classList.add('active-tab');
-                document.getElementById('tabSignupBtn').classList.remove('active-tab');
-            } else {
-                document.getElementById('loginBox').style.display = 'none';
-                document.getElementById('signupBox').style.display = 'block';
-                document.getElementById('tabSignupBtn').classList.add('active-tab');
-                document.getElementById('tabLoginBtn').classList.remove('active-tab');
+        async function systemLogin() {
+            const id = document.getElementById('loginId').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+            const statusEl = document.getElementById('authStatus');
+
+            if (!id || !pass) {
+                alert("يرجى إدخال البيانات كاملة!");
+                return;
+            }
+
+            statusEl.style.color = "#38bdf8";
+            statusEl.textContent = "⏳ جاري التحقق من البيانات سحابياً...";
+
+            try {
+                const res = await fetch(`${googleScriptUrl}?action=loginStudent&id=${id}&pass=${pass}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('currentUser', JSON.stringify(data.student));
+                    window.location.href = "student.html";
+                    return;
+                } else {
+                    statusEl.style.color = "var(--accent-red)";
+                    statusEl.textContent = "❌ بيانات الدخول غير صحيحة!";
+                }
+            } catch (e) {
+                statusEl.style.color = "var(--accent-red)";
+                statusEl.textContent = "❌ خطأ في الاتصال بالسحابة.";
             }
         }
     </script>
