@@ -29,13 +29,12 @@
             const code = document.getElementById('adminCode').value.trim();
             const pass = document.getElementById('adminPass').value.trim();
 
-            // البيانات السرية محمية بالكامل داخل الكود البرمجي هنا وليست معروضة للطلاب
+            // بيانات الإدارة التي طلبتها
             if (code === "admin" && pass === "44554455") {
-                // بعد نجاح الدخول، نطلب اختيار الفرقة المراد إدارتها
                 document.body.innerHTML = `
                     <div class="container" style="max-width: 500px; text-align: center;">
                         <h2 style="color: #38bdf8;">اختر الفرقة الدراسية للإدارة</h2>
-                        <p style="color: #9ca3af; margin-bottom: 20px;">لكل فرقة كتبها، جداولها، وشكاويها المستقلة تماماً.</p>
+                        <p style="color: #9ca3af; margin-bottom: 20px;">اختر الفرقة للتحكم الكامل في محتواها وإعداداتها وسجلاتها.</p>
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <button class="btn" onclick="selectGrade('الفرقة الأولى')" style="background: #4f46e5;">إدارة الفرقة الأولى</button>
                             <button class="btn" onclick="selectGrade('الفرقة الثانية')" style="background: #4f46e5;">إدارة الفرقة الثانية</button>
