@@ -1,28 +1,29 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم والإدارة الشاملة - كلية الإعلام</title>
+    <title>لوحة التحكم والإدارة</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- شاشة تسجيل دخول الإدارة -->
+    <!-- شاشة تسجيل دخول الإدارة (باسورد 44554455 بدون أي تغشيش) -->
     <div id="adminLoginModal" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(3,7,18,0.95); z-index:1000; justify-content:center; align-items:center;">
         <div class="container" style="max-width:400px; text-align:right;">
-            <div class="admin-badge">حماية الإدارة العليا</div>
+            <div class="admin-badge">تسجيل الإدارة</div>
             <h2 style="font-size:1.2rem; margin-bottom:15px;">تسجيل دخول المشرف</h2>
             <div class="input-group" style="margin-bottom:10px;">
                 <label style="font-size:0.85rem;">اسم المستخدم:</label>
-                <input type="text" id="adminUser" placeholder="admin" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                <input type="text" id="adminUser" placeholder="اسم المستخدم" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
             </div>
             <div class="input-group" style="margin-bottom:15px;">
                 <label style="font-size:0.85rem;">كلمة المرور:</label>
-                <input type="password" id="adminPass" placeholder="••••" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                <input type="password" id="adminPass" placeholder="••••••••" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
             </div>
             <button class="btn" onclick="verifyAdminLogin()">دخول لوحة التحكم</button>
             <p id="adminLoginError" style="color:var(--accent-red); font-size:0.8rem; margin-top:10px; text-align:center;"></p>
-            <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top:10px;">العودة للمنصة</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top:10px;">العودة</button>
         </div>
     </div>
 
@@ -36,17 +37,17 @@
             <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="width: auto; padding: 8px 15px;">خروج لاختيار الفرقة</button>
         </div>
 
-        <!-- 1. إدارة شؤون الطلاب (تعديل كامل للبيانات، الباسورد، والكود) -->
+        <!-- 1. إدارة شؤون الطلاب (تعديل كامل وحذف) -->
         <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-            <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 12px;">👥 إدارة طلاب الفرقة وصلاحياتهم</h3>
+            <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 12px;">👥 إدارة طلاب الفرقة</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <input type="text" id="regName" placeholder="اسم الطالب" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
                 <input type="text" id="regPhone" placeholder="رقم الهاتف" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
                 <input type="password" id="regPass" placeholder="كلمة المرور" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
             </div>
-            <button class="btn" onclick="addNewStudent()" style="background: #10b981; margin-bottom:15px;">توليد كود وحفظ طالب جديد</button>
+            <button class="btn" onclick="addNewStudent()" style="background: #10b981; margin-bottom:15px;">إضافة طالب جديد وتوليد كود</button>
             
-            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--text-sub);">سجل طلاب الفرقة (تعديل / حذف):</h4>
+            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--text-sub);">قائمة طلاب الفرقة (تعديل البيانات أو الحذف):</h4>
             <div style="max-height: 200px; overflow-y: auto;">
                 <table style="width:100%; text-align:right; font-size:0.8rem; border-collapse:collapse;">
                     <thead>
@@ -63,12 +64,12 @@
             </div>
         </div>
 
-        <!-- 2. إدارة الكتب الدراسية (سجل المرفوعات والتعديل) -->
+        <!-- 2. إدارة الكتب الدراسية -->
         <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid #38bdf8; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
             <h3 style="color: #38bdf8; font-size: 1.1rem; margin-bottom: 12px;">📚 إدارة الكتب الدراسية</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 10px;">
                 <input type="text" id="bookTitle" placeholder="اسم الكتاب" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
-                <input type="text" id="bookLink" placeholder="رابط الكتاب (PDF/Drive)" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
+                <input type="text" id="bookLink" placeholder="رابط الكتاب" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
                 <button class="btn" onclick="saveContent('book')" style="background: #38bdf8; color:#030712; margin:0;">إضافة كتاب</button>
             </div>
             <div id="booksList" style="font-size:0.85rem; color:var(--text-sub);"></div>
@@ -105,15 +106,15 @@
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <input type="text" id="mapLink" placeholder="رابط موقع القاعة (Google Maps)" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
-                <input type="number" id="rangeMeters" placeholder="النطاق المسموح بالمتر (مثال: 50)" value="50" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
+                <input type="number" id="rangeMeters" placeholder="النطاق بالمتر (مثال: 50)" value="50" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
             </div>
             <div style="display: flex; gap: 10px;">
                 <button class="btn" onclick="saveLectureSettings(true)" style="background: #10b981;">حفظ وفتح الحضور للمادة</button>
-                <button class="btn" onclick="saveLectureSettings(false)" style="background: #ef4444;">إغلاق المحاضرة وأرشفة الكشف</button>
+                <button class="btn" onclick="saveLectureSettings(false)" style="background: #ef4444;">إغلاق المحاضرة والأرشيف</button>
             </div>
         </div>
 
-        <!-- 6. كشف الحضور الحي والأرشيف -->
+        <!-- 6. الحضور الحي والأرشيف -->
         <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px;">
             <h3 style="font-size: 1.1rem; margin-bottom: 12px;">📋 كشف الحضور الحي وسجل الأرشيف</h3>
             <button class="btn btn-secondary" onclick="loadAdminData()" style="margin-bottom: 10px; width:auto; padding:6px 12px;">تحديث البيانات</button>
@@ -132,9 +133,8 @@
                     </tbody>
                 </table>
             </div>
-
-            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--text-sub);">أرشيف المحاضرات السابقة:</h4>
-            <div id="archiveList" style="font-size:0.85rem; color:var(--text-sub);">لا توجد ملفات مؤرشفة بعد.</div>
+            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--text-sub);">الأرشيف السابق:</h4>
+            <div id="archiveList" style="font-size:0.85rem; color:var(--text-sub);">لا توجد ملفات مؤرشفة.</div>
         </div>
     </div>
 
@@ -146,18 +146,17 @@
         function verifyAdminLogin() {
             let u = document.getElementById('adminUser').value.trim();
             let p = document.getElementById('adminPass').value.trim();
-            if(u === "admin" && p === "5656") {
+            if(u === "admin" && p === "44554455") {
                 document.getElementById('adminLoginModal').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'block';
                 loadAdminData();
             } else {
-                document.getElementById('adminLoginError').textContent = "خطأ في بيانات الدخول (admin / 5656)";
+                document.getElementById('adminLoginError').textContent = "خطأ في اسم المستخدم أو كلمة المرور";
             }
         }
 
         async function loadAdminData() {
             try {
-                // جلب الطلاب
                 let resStudents = await fetch(`${googleScriptUrl}?action=getAllStudents&grade=${encodeURIComponent(currentGrade)}`);
                 let students = await resStudents.json();
                 let sBody = document.getElementById('studentsTableBody');
@@ -165,9 +164,9 @@
                 students.forEach(st => {
                     sBody.innerHTML += `<tr style="border-bottom:1px solid var(--border-color);">
                         <td style="padding:6px; color:#38bdf8;">${st.id}</td>
-                        <td style="padding:6px;"><input type="text" id="n_${st.id}" value="${st.name}" style="background:#030712; color:#fff; border:1px solid var(--border-color); padding:3px; width:100px;"></td>
-                        <td style="padding:6px;"><input type="text" id="p_${st.id}" value="${st.phone}" style="background:#030712; color:#fff; border:1px solid var(--border-color); padding:3px; width:90px;"></td>
-                        <td style="padding:6px;"><input type="text" id="pw_${st.id}" value="${st.password}" style="background:#030712; color:#fff; border:1px solid var(--border-color); padding:3px; width:80px;"></td>
+                        <td style="padding:6px;"><input type="text" id="n_${st.id}" value="${st.name}" style="background:#030712; color:#fff; border:1px solid var(--border-color); padding:3px; width:90px;"></td>
+                        <td style="padding:6px;"><input type="text" id="p_${st.id}" value="${st.phone}" style="background:#030712; color:#fff; border:1px solid var(--border-color); padding:3px; width:80px;"></td>
+                        <td style="padding:6px;"><input type="text" id="pw_${st.id}" value="${st.password}" style="background:#030712; color:#fff; border:1px solid var(--border-color); padding:3px; width:70px;"></td>
                         <td style="padding:6px;">
                             <button onclick="updateStudent('${st.id}')" style="background:#10b981; color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;">حفظ</button>
                             <button onclick="deleteStudent('${st.id}')" style="background:#ef4444; color:#fff; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;">حذف</button>
@@ -175,11 +174,9 @@
                     </tr>`;
                 });
 
-                // جلب محتوى الفرقة والحضور والأرشيف
                 let resData = await fetch(`${googleScriptUrl}?action=getGradeData&grade=${encodeURIComponent(currentGrade)}`);
                 let data = await resData.json();
 
-                // الكتب
                 let bList = document.getElementById('booksList');
                 bList.innerHTML = "";
                 data.books.forEach(b => {
@@ -189,7 +186,6 @@
                     </div>`;
                 });
 
-                // الجداول
                 let sList = document.getElementById('schedulesList');
                 sList.innerHTML = "";
                 data.schedules.forEach(s => {
@@ -199,7 +195,6 @@
                     </div>`;
                 });
 
-                // الاختبارات
                 let eList = document.getElementById('examsList');
                 eList.innerHTML = "";
                 data.exams.forEach(e => {
@@ -209,25 +204,23 @@
                     </div>`;
                 });
 
-                // الحضور الحي
                 let resAtt = await fetch(`${googleScriptUrl}?action=getLiveAttendance&grade=${encodeURIComponent(currentGrade)}`);
                 let attData = await resAtt.json();
                 let tbody = document.getElementById('attendanceTableBody');
-                tbody.innerHTML = attData.length === 0 ? `<tr><td colspan="4" style="text-align:center; padding:10px; color:var(--text-sub);">لا يوجد حضور مسجل حالياً.</td></tr>` : "";
+                tbody.innerHTML = attData.length === 0 ? `<tr><td colspan="4" style="text-align:center; padding:10px; color:var(--text-sub);">لا يوجد حضور.</td></tr>` : "";
                 attData.forEach(row => {
                     tbody.innerHTML += `<tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">${row.time}</td><td style="padding:8px; color:#38bdf8;">${row.id}</td><td style="padding:8px;">${row.name}</td><td style="padding:8px;">${row.subject}</td></tr>`;
                 });
 
-                // الأرشيف
                 let resArc = await fetch(`${googleScriptUrl}?action=getArchive&grade=${encodeURIComponent(currentGrade)}`);
                 let arcData = await resArc.json();
                 let arcDiv = document.getElementById('archiveList');
-                arcDiv.innerHTML = arcData.length === 0 ? "لا توجد ملفات مؤرشفة بعد." : "";
+                arcDiv.innerHTML = arcData.length === 0 ? "لا توجد ملفات." : "";
                 arcData.forEach(arc => {
-                    arcDiv.innerHTML += `<div>محاضرة: ${arc.subject} | التاريخ: ${arc.date} | الحضور: ${arc.count} طالب <a href="${arc.csv}" download="archive.csv" style="color:#38bdf8; margin-right:10px;">تحميل الكشف</a></div>`;
+                    arcDiv.innerHTML += `<div>محاضرة: ${arc.subject} | التاريخ: ${arc.date} | الحضور: ${arc.count} طالب <a href="${arc.csv}" download="archive.csv" style="color:#38bdf8; margin-right:10px;">تحميل</a></div>`;
                 });
 
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         }
 
         async function addNewStudent() {
@@ -240,7 +233,7 @@
                 method: 'POST',
                 body: JSON.stringify({ action: "registerStudent", id: randomId, name: name, phone: phone, grade: currentGrade, password: pass })
             });
-            alert("تم إنشاء الطالب بنجاح بكود: " + randomId);
+            alert("تم إنشاء الطالب بكود: " + randomId);
             loadAdminData();
         }
 
@@ -257,7 +250,7 @@
         }
 
         async function deleteStudent(id) {
-            if(!confirm("هل أنت متأكد من حذف الطالب؟")) return;
+            if(!confirm("هل أنت متأكد من الحذف؟")) return;
             await fetch(googleScriptUrl, {
                 method: 'POST',
                 body: JSON.stringify({ action: "deleteStudent", id: id })
@@ -289,7 +282,7 @@
         }
 
         async function saveLectureSettings(isOpen) {
-            let subject = document.getElementById('lectureSubject').value.trim() || "محاضرة عامة";
+            let subject = document.getElementById('lectureSubject').value.trim() || "محاضرة";
             let lectureCode = document.getElementById('lectureCode').value.trim() || "1234";
             let mapLink = document.getElementById('mapLink').value.trim();
             let range = document.getElementById('rangeMeters').value || 50;
@@ -306,10 +299,10 @@
                         method: 'POST',
                         body: JSON.stringify({ action: "toggleAttendance", grade: currentGrade, subject: subject, lectureCode: lectureCode, isOpen: true })
                     });
-                    alert("🟢 تم فتح المحاضرة وتحديد إحداثيات موقعك الحالي بنجاح!");
+                    alert("🟢 تم فتح المحاضرة وحفظ إحداثيات الـ GPS!");
                     loadAdminData();
                 }, (err) => {
-                    alert("⚠️ يجب السماح بالوصول للموقع الجغرافي (GPS) لفتح المحاضرة!");
+                    alert("⚠️ يجب السماح بالوصول لموقع GPS!");
                 });
             } else {
                 await fetch(googleScriptUrl, {
@@ -320,7 +313,7 @@
                     method: 'POST',
                     body: JSON.stringify({ action: "archiveLecture", grade: currentGrade, subject: subject })
                 });
-                alert("🔴 تم إغلاق المحاضرة وأرشفة الكشف بنجاح!");
+                alert("🔴 تم إغلاق المحاضرة والأرشيف!");
                 loadAdminData();
             }
         }
