@@ -3,191 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة تسجيل الحضور الذكي</title>
+    <title>تسجيل الحضور الجغرافي</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="admin-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">📍 نظام الحضور الجغرافي</div>
-        <h2>تسجيل المحاضرة</h2>
-        <p id="userInfo" style="color: var(--text-main); font-weight: 700; margin-bottom: 5px;"></p>
-        <p id="attendanceSubject" style="font-weight: 600; color: #38bdf8; margin-bottom: 15px;"></p>
+    <div class="container" style="max-width: 480px; text-align: right;">
+        <div class="admin-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">📍 الحضور الذكي بالـ GPS</div>
+        <h2 style="font-size: 1.4rem;">تسجيل المحاضرة الحالية</h2>
         
-        <p id="lectureTitleDisplay" style="background:rgba(79, 70, 229, 0.1); border: 1px solid var(--border-color); padding:10px; border-radius:10px; font-weight:700; font-size:14px; margin-bottom: 20px;">جاري التحقق من حالة المحاضرة سحابياً...</p>
+        <p id="subDisplay" style="color: #38bdf8; font-weight: bold; margin-bottom: 15px;">جاري جلب بيانات المحاضرة...</p>
 
-        <div id="attendanceForm">
-            <div class="input-group">
-                <label>الكود السري للمحاضرة:</label>
-                <input type="password" id="secretCode" placeholder="أدخل كود المحاضرة السري">
-            </div>
-
-            <button type="button" class="btn" onclick="submitFinalAttendance()">تسجيل الحضور الآن</button>
+        <div id="attForm" style="display:none;">
+            <p id="statusMsg" style="font-size: 0.9rem; margin-bottom: 15px;"></p>
+            <button class="btn" onclick="verifyAndRecordGPS()" style="background: #10b981; padding: 15px;">📍 تحقق من موقعي وسجل حضوري</button>
         </div>
 
-        <p id="statusMsg" class="status-msg"></p>
-
-        <button type="button" class="btn btn-secondary" onclick="goBack()">العودة لاختيار المواد</button>
+        <button class="btn btn-secondary" onclick="window.location.href='student.html'" style="margin-top: 15px;">العودة للوحة الطالب</button>
     </div>
 
     <script src="script.js"></script>
     <script>
         const user = JSON.parse(localStorage.getItem('currentUser'));
-        const subject = localStorage.getItem('selectedSubject');
+        if(!user) { window.location.href = 'index.html'; }
 
-        if(!user) {
-            window.location.href = 'index.html';
-        } else if(!subject) {
-            window.location.href = 'subjects.html';
-        } else {
-            document.getElementById('userInfo').textContent = `الطالب: ${user.name} (ID: ${user.id})`;
-            document.getElementById('attendanceSubject').textContent = `المادة المختارة: ${subject}`;
-        }
+        let lectureData = null;
 
-        async function checkLiveAttendanceStatus() {
+        async function checkLectureStatus() {
             try {
-                const settings = await fetchAppSettings();
-                if (settings) {
-                    const title = settings.currentSubject || "المحاضرة الحالية";
-                    document.getElementById('lectureTitleDisplay').textContent = `📌 ${title}`;
+                const res = await fetch(`${googleScriptUrl}?action=getGradeData&grade=${user.grade}`);
+                const data = await res.json();
+                lectureData = data.lecture;
 
-                    if (String(settings.isAttendanceOpen).trim() === 'false') {
-                        document.getElementById('attendanceForm').style.display = 'none';
-                        const msgEl = document.getElementById('statusMsg');
-                        msgEl.style.color = 'var(--accent-red)';
-                        msgEl.textContent = '🔒 تسجيل الحضور مغلق حالياً من قِبل الإدارة.';
-                    } else {
-                        document.getElementById('attendanceForm').style.display = 'block';
-                        document.getElementById('statusMsg').textContent = '';
-                    }
+                document.getElementById('subDisplay').textContent = `المحاضرة المفعلة: ${lectureData.subject}`;
+
+                if (String(lectureData.isOpen) === "true") {
+                    document.getElementById('attForm').style.display = 'block';
+                    document.getElementById('statusMsg').textContent = "التسجيل مفتوح حالياً. اضغط على زر التحقق أدناه لتسجيل حضورك ضمن النطاق المسموح.";
+                    document.getElementById('statusMsg').style.color = "var(--accent-green)";
+                } else {
+                    document.getElementById('attForm').style.display = 'none';
+                    document.getElementById('statusMsg').textContent = "🔒 تسجيل الحضور مغلق حالياً من قِبل الإدارة.";
                 }
             } catch(e) {
-                console.error(e);
+                document.getElementById('subDisplay').textContent = "تعذر الاتصال بالسحابة.";
             }
         }
-
-        checkLiveAttendanceStatus();
-
-        function goBack() {
-            window.location.href = 'subjects.html';
-        }
+        checkLectureStatus();
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371e3;
-            const φ1 = lat1 * Math.PI/180;
-            const φ2 = lat2 * Math.PI/180;
-            const Δφ = (lat2-lat1) * Math.PI/180;
-            const Δλ = (lon2-lon1) * Math.PI/180;
-
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                      Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-            return R * c;
+            const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
-        async function submitFinalAttendance() {
-            const code = document.getElementById('secretCode').value.trim();
-            const statusMsg = document.getElementById('statusMsg');
+        function verifyAndRecordGPS() {
+            let msg = document.getElementById('statusMsg');
+            msg.textContent = "⏳ جاري تحديد موقعك الجغرافي...";
 
-            if (!code) {
-                alert("يرجى إدخال الكود السري للمحاضرة!");
-                return;
-            }
+            if (!navigator.geolocation) { alert("متصفحك لا يدعم الـ GPS"); return; }
 
-            const settings = await fetchAppSettings();
-            if (String(settings.isAttendanceOpen).trim() === 'false') {
-                alert("❌ عذراً، الإدارة أغلقت تسجيل الحضور!");
-                return;
-            }
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                let lat = pos.coords.latitude;
+                let lng = pos.coords.longitude;
+                let link = `https://maps.google.com/?q=${lat},${lng}`;
 
-            // كود الاستثناء VIP
-            if (code === "77880") {
-                statusMsg.style.color = "var(--accent-green)";
-                statusMsg.textContent = "⚡ تم استخدام كود الاستثناء. جاري تسجيل الحضور مباشرة...";
-                sendAttendanceData("https://maps.google.com/?q=Bypass_01500", "Bypass_01500");
-                return;
-            }
+                let dist = calculateDistance(lat, lng, Number(lectureData.lat), Number(lectureData.lng));
 
-            if (code !== "2244") { 
-                alert("❌ الكود السري للمحاضرة غير صحيح!");
-                return;
-            }
-
-            const userPhoneClean = String(user.phone || '').trim();
-            if (userPhoneClean === "012288") {
-                statusMsg.style.color = "var(--accent-green)";
-                statusMsg.textContent = "⭐ تم التعرف على حساب الاستثناء VIP. جاري تسجيل الحضور مباشرة...";
-                sendAttendanceData("https://maps.google.com/?q=VIP_Bypass", "VIP");
-                return;
-            }
-
-            statusMsg.style.color = "#38bdf8";
-            statusMsg.textContent = "📍 جاري تحديد موقعك الجغرافي والتحقق من النطاق...";
-
-            if (!navigator.geolocation) {
-                alert("متصفحك لا يدعم خاصية تحديد الموقع الجغرافي!");
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                const locationLink = `https://maps.google.com/?q=${lat},${lon}`;
-
-                // إحداثيات كلية الإعلام جامعة الأزهر
-                const collegeLat = 30.057393; 
-                const collegeLon = 31.325608; 
-                const allowedRadiusMeters = 2000; 
-
-                const distance = calculateDistance(lat, lon, collegeLat, collegeLon);
-
-                if (distance > allowedRadiusMeters) {
-                    statusMsg.style.color = "var(--accent-red)";
-                    statusMsg.textContent = `❌ أنت خارج نطاق الكلية (تبعد مسافة ${Math.round(distance)} متر).`;
+                if (dist > Number(lectureData.range)) {
+                    msg.style.color = "var(--accent-red)";
+                    msg.textContent = `❌ أنت خارج نطاق المحاضرة المسموح (تبعد ${Math.round(dist)} متر).`;
                     return;
                 }
 
-                sendAttendanceData(locationLink, "Normal");
-
-            }, (error) => {
-                statusMsg.style.color = "var(--accent-red)";
-                statusMsg.textContent = "❌ فشل في تحديد موقع الـ GPS. تأكد من تفعيل الموقع.";
-            });
-        }
-
-        async function sendAttendanceData(locationLink, typeStatus) {
-            const statusMsg = document.getElementById('statusMsg');
-            const timeStr = new Date().toLocaleString('ar-EG');
-
-            statusMsg.textContent = "⏳ جاري تسجيل بيانات الحضور في السحابة...";
-
-            try {
+                msg.textContent = "⏳ جاري إرسال الحضور للسحابة...";
                 await fetch(googleScriptUrl, {
                     method: 'POST',
                     body: JSON.stringify({
                         action: "recordAttendance",
+                        grade: user.grade,
                         id: user.id,
                         name: user.name,
-                        phone: user.phone,
-                        grade: user.grade,
-                        subject: subject,
-                        time: timeStr,
-                        locationLink: locationLink,
-                        status: typeStatus
+                        subject: lectureData.subject,
+                        locationLink: link
                     })
                 });
 
-                statusMsg.style.color = "var(--accent-green)";
-                statusMsg.textContent = "✅ تم تسجيل حضورك بنجاح!";
-                alert("🎉 تم تسجيل حضورك بنجاح وسُجل في الشيت!");
-                setTimeout(() => { window.location.href = 'student.html'; }, 1500);
+                msg.style.color = "var(--accent-green)";
+                msg.textContent = "✅ تم تسجيل حضورك بنجاح وسجل في الأرشيف الحي!";
+                alert("🎉 تم تسجيل حضورك للمحاضرة بنجاح!");
+                setTimeout(() => window.location.href = 'student.html', 1500);
 
-            } catch (e) {
-                console.error(e);
-                statusMsg.style.color = "var(--accent-red)";
-                statusMsg.textContent = "❌ حدث خطأ أثناء إرسال البيانات.";
-            }
+            }, () => {
+                msg.style.color = "var(--accent-red)";
+                msg.textContent = "❌ فشل في قراءة الموقع. تأكد من تفعيل الـ GPS.";
+            });
         }
     </script>
 </body>
