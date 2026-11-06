@@ -10,22 +10,24 @@
     <div class="container">
         <div class="admin-badge">جامعة الأزهر - كلية الإعلام</div>
         <h2>تسجيل الدخول للنظام الأكاديمي</h2>
-        <p>أدخل حسابك التجريبي (admin / 5656) أو حسابك الجامعي</p>
+        <p>يرجى إدخال بيانات حسابك الجامعي المعتمد</p>
 
         <div class="input-group">
             <label>الرقم الجامعي / اسم المستخدم:</label>
-            <input type="text" id="loginId" placeholder="أدخل الكود (مثال: admin)">
+            <input type="text" id="loginId" placeholder="أدخل الكود الخاص بك">
         </div>
         <div class="input-group">
             <label>كلمة السر:</label>
-            <input type="password" id="loginPassword" placeholder="أدخل كلمة السر (مثال: 5656)">
+            <input type="password" id="loginPassword" placeholder="••••••••">
         </div>
         <button type="button" class="btn" onclick="systemLogin()">دخول المنصة</button>
 
         <p id="authStatus" class="status-msg"></p>
 
-        <hr style="margin-top: 25px; border: 0.5px solid var(--border-color);">
-        <a href="admin-select.html" style="font-size: 13px; color: #38bdf8; text-decoration: none; display: block; margin-top: 15px; font-weight: bold;">🔐 بوابة الإدارة العليا</a>
+        <div style="margin-top: 15px; display: flex; justify-content: space-between; font-size: 13px;">
+            <a href="register.html" style="color: #10b981; text-decoration: none; font-weight: bold;">📝 إنشاء حساب جديد للطالب</a>
+            <a href="admin-select.html" style="color: #38bdf8; text-decoration: none; font-weight: bold;">🔐 بوابة الإدارة العليا</a>
+        </div>
     </div>
 
     <script src="script.js"></script>
@@ -37,9 +39,9 @@
 
             if (!id || !pass) { alert("يرجى إدخال البيانات!"); return; }
 
-            // حسابك التجريبي المباشر للفرقة الأولى
+            // الحساب التجريبي الخاص بك (مخفي برمجياً فقط)
             if (id === "admin" && pass === "5656") {
-                localStorage.setItem('currentUser', JSON.stringify({ id: "5656", name: "أحمد سمير (تجريبي)", grade: "الفرقة الأولى", phone: "01000000000" }));
+                localStorage.setItem('currentUser', JSON.stringify({ id: "5656", name: "أحمد سمير", grade: "الفرقة الأولى", phone: "01000000000" }));
                 window.location.href = "student.html";
                 return;
             }
