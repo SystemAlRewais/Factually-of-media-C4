@@ -3,53 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل دخول الإدارة</title>
+    <title>بوابة الإدارة - اختيار الفرقة أو إنشاء حساب</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container" style="max-width: 400px; text-align: center;">
-        <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--accent-red);">🔐 البوابة المركزية للإدارة</div>
-        <h2>تسجيل دخول المشرف</h2>
-        
-        <div class="input-group">
-            <label>كود الإدارة:</label>
-            <input type="text" id="adminCode" placeholder="أدخل كود الإدارة">
-        </div>
-        <div class="input-group">
-            <label>كلمة المرور:</label>
-            <input type="password" id="adminPass" placeholder="••••••••">
-        </div>
-        <button class="btn" onclick="verifyAdmin()" style="background: #ef4444;">دخول لوحة التحكم</button>
+    <div class="container" style="max-width: 450px; text-align: right;">
+        <div class="admin-badge">جامعة الأزهر - كلية الإعلام</div>
+        <h2 style="font-size: 1.3rem;">لوحة التحكم والإدارة</h2>
+        <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 20px;">اختر الفرقة الدراسية للإدارة، أو انتقل لإنشاء حساب طالب جديد سحابياً.</p>
 
-        <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top: 15px;">العودة للرئيسية</button>
+        <button class="btn" onclick="selectGrade('الفرقة الأولى')" style="margin-bottom: 10px;">إدارة الفرقة الأولى</button>
+        <button class="btn" onclick="selectGrade('الفرقة الثانية')" style="margin-bottom: 10px;">إدارة الفرقة الثانية</button>
+        <button class="btn" onclick="selectGrade('الفرقة الثالثة')" style="margin-bottom: 10px;">إدارة الفرقة الثالثة</button>
+        <button class="btn" onclick="selectGrade('الفرقة الرابعة')" style="margin-bottom: 15px;">إدارة الفرقة الرابعة</button>
+
+        <hr style="border: 0.5px solid var(--border-color); margin-bottom: 15px;">
+        
+        <!-- الخيار الخامس: إنشاء حساب طالب جديد -->
+        <button class="btn" onclick="openRegisterModal()" style="background: #10b981;">📝 الخيار الخامس: إنشاء حساب طالب جديد</button>
+
+        <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top: 10px;">العودة لتسجيل الدخول</button>
     </div>
 
-    <script>
-        function verifyAdmin() {
-            const code = document.getElementById('adminCode').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
+    <!-- نافذة منبثقة لإنشاء حساب طالب من الإدارة -->
+    <div id="registerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; justify-content:center; align-items:center;">
+        <div style="background:var(--card-bg); padding:25px; border-radius:16px; border:1px solid var(--border-color); width:90%; max-width:400px; text-align:right;">
+            <h3 style="color:#10b981; margin-bottom:15px;">إنشاء حساب طالب جديد وربطه بالفرقة</h3>
+            
+            <div class="input-group" style="margin-bottom:10px;">
+                <label style="font-size:0.85rem;">اسم الطالب الثلاثي:</label>
+                <input type="text" id="regName" placeholder="الاسم بالكامل" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <div class="input-group" style="margin-bottom:10px;">
+                <label style="font-size:0.85rem;">رقم الهاتف / الإيميل:</label>
+                <input type="text" id="regPhone" placeholder="الهاتف أو الإيميل" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <div class="input-group" style="margin-bottom:10px;">
+                <label style="font-size:0.85rem;">الفرقة الدراسية:</label>
+                <select id="regGrade" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                    <option value="الفرقة الأولى">الفرقة الأولى</option>
+                    <option value="الفرقة الثانية">الفرقة الثانية</option>
+                    <option value="الفرقة الثالثة">الفرقة الثالثة</option>
+                    <option value="الفرقة الرابعة">الفرقة الرابعة</option>
+                </select>
+            </div>
+            <div class="input-group" style="margin-bottom:15px;">
+                <label style="font-size:0.85rem;">كلمة المرور (الباص):</label>
+                <input type="password" id="regPass" placeholder="••••••••" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
 
-            // بيانات الإدارة التي طلبتها
-            if (code === "admin" && pass === "44554455") {
-                document.body.innerHTML = `
-                    <div class="container" style="max-width: 500px; text-align: center;">
-                        <h2 style="color: #38bdf8;">اختر الفرقة الدراسية للإدارة</h2>
-                        <p style="color: #9ca3af; margin-bottom: 20px;">اختر الفرقة للتحكم الكامل في محتواها وإعداداتها وسجلاتها.</p>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <button class="btn" onclick="selectGrade('الفرقة الأولى')" style="background: #4f46e5;">إدارة الفرقة الأولى</button>
-                            <button class="btn" onclick="selectGrade('الفرقة الثانية')" style="background: #4f46e5;">إدارة الفرقة الثانية</button>
-                            <button class="btn" onclick="selectGrade('الفرقة الثالثة')" style="background: #4f46e5;">إدارة الفرقة الثالثة</button>
-                            <button class="btn" onclick="selectGrade('الفرقة الرابعة')" style="background: #4f46e5;">إدارة الفرقة الرابعة</button>
-                        </div>
-                    </div>`;
-            } else {
-                alert("❌ بيانات الإدارة غير صحيحة!");
-            }
+            <button class="btn" onclick="submitNewStudent()" style="background:#10b981; margin-bottom:10px;">توليد كود وحفظ سحابياً</button>
+            <button class="btn btn-secondary" onclick="closeRegisterModal()">إلغاء</button>
+            <p id="regStatus" style="font-size:0.85rem; text-align:center; margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function selectGrade(grade) {
+            localStorage.setItem('adminGrade', grade);
+            window.location.href = 'admin.html';
         }
 
-        function selectGrade(grade) {
-            localStorage.setItem('adminSelectedGrade', grade);
-            window.location.href = 'admin.html';
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        async function submitNewStudent() {
+            let name = document.getElementById('regName').value.trim();
+            let phone = document.getElementById('regPhone').value.trim();
+            let grade = document.getElementById('regGrade').value;
+            let pass = document.getElementById('regPass').value.trim();
+            let statusEl = document.getElementById('regStatus');
+
+            if(!name || !phone || !pass) { alert("يرجى تعبئة كافة الحقول!"); return; }
+
+            let randomId = 'AZ' + Math.floor(100000 + Math.random() * 900000);
+            statusEl.style.color = "#38bdf8";
+            statusEl.textContent = "⏳ جاري الحفظ والتوليد سحابياً...";
+
+            try {
+                await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "registerStudent",
+                        id: randomId,
+                        name: name,
+                        phone: phone,
+                        grade: grade,
+                        password: pass
+                    })
+                });
+
+                statusEl.style.color = "#10b981";
+                statusEl.textContent = `✅ تم بنجاح! كود الطالب: ${randomId}`;
+                alert(`🎉 تم إنشاء الحساب بنجاح!\nكود الطالب الجامعي هو: ${randomId}`);
+                closeRegisterModal();
+            } catch(e) {
+                statusEl.style.color = "red";
+                statusEl.textContent = "❌ خطأ في الاتصال بالسحابة.";
+            }
         }
     </script>
 </body>
