@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب طالب جديد</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 450px; text-align: right;">
+        <div class="admin-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">📝 تسجيل طالب جديد</div>
+        <h2 style="font-size: 1.4rem;">إنشاء حساب أكاديمي</h2>
+        <p style="color: var(--text-sub); font-size: 0.85rem;">أدخل بياناتك وسيتم توليد رقم جامعي (ID) خاص بك وربطه بفرقتك تلقائياً.</p>
+
+        <div class="input-group">
+            <label>اسم الطالب الثلاثي:</label>
+            <input type="text" id="regName" placeholder="أدخل الاسم بالكامل">
+        </div>
+        <div class="input-group">
+            <label>رقم الهاتف / البريد الإلكتروني:</label>
+            <input type="text" id="regPhone" placeholder="رقم الهاتف أو الإيميل">
+        </div>
+        <div class="input-group">
+            <label>الفرقة الدراسية:</label>
+            <select id="regGrade" style="width:100%; padding:13px; background:#030712; color:#fff; border-radius:12px; border:1px solid var(--border-color);">
+                <option value="الفرقة الأولى">الفرقة الأولى</option>
+                <option value="الفرقة الثانية">الفرقة الثانية</option>
+                <option value="الفرقة الثالثة">الفرقة الثالثة</option>
+                <option value="الفرقة الرابعة">الفرقة الرابعة</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>كلمة المرور (الباص):</label>
+            <input type="password" id="regPass" placeholder="••••••••">
+        </div>
+
+        <button class="btn" onclick="registerNewStudent()" style="background: #10b981;">إنشاء الحساب الآن</button>
+        <p id="regStatus" class="status-msg" style="text-align: center;"></p>
+
+        <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top: 15px;">العودة لتسجيل الدخول</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        async function registerNewStudent() {
+            let name = document.getElementById('regName').value.trim();
+            let phone = document.getElementById('regPhone').value.trim();
+            let grade = document.getElementById('regGrade').value;
+            let pass = document.getElementById('regPass').value.trim();
+            let statusEl = document.getElementById('regStatus');
+
+            if(!name || !phone || !pass) { alert("يرجى تعبئة كافة الحقول!"); return; }
+
+            // توليد رقم جامعي عشوائي فريد (ID)
+            let randomId = 'AZ' + Math.floor(100000 + Math.random() * 900000);
+
+            statusEl.style.color = "#38bdf8";
+            statusEl.textContent = "⏳ جاري إنشاء الحساب وحفظه في السحابة...";
+
+            try {
+                let res = await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "registerStudent",
+                        id: randomId,
+                        name: name,
+                        phone: phone,
+                        grade: grade,
+                        password: pass
+                    })
+                });
+
+                statusEl.style.color = "var(--accent-green)";
+                statusEl.textContent = `✅ تم إنشاء الحساب بنجاح!\nالكود الجامعي الخاص بك: ${randomId}`;
+                alert(`🎉 مبروك يا بشمهندس!\nتم إنشاء حسابك بنجاح.\n\nكود الطالب الخاص بك هو: ${randomId}\nاحفظه جيداً لتسجيل الدخول به!`);
+                
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+            } catch(e) {
+                statusEl.style.color = "var(--accent-red)";
+                statusEl.textContent = "❌ حدث خطأ أثناء الاتصال بالسحابة.";
+            }
+        }
+    </script>
+</body>
+</html>
