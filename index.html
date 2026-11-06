@@ -10,15 +10,15 @@
     <div class="container">
         <div class="admin-badge">جامعة الأزهر - كلية الإعلام</div>
         <h2>تسجيل الدخول للنظام الأكاديمي</h2>
-        <p>يرجى إدخال بيانات حسابك الجامعي المعتمد</p>
+        <p>أدخل حسابك التجريبي (admin / 5656) أو حسابك الجامعي</p>
 
         <div class="input-group">
             <label>الرقم الجامعي / اسم المستخدم:</label>
-            <input type="text" id="loginId" placeholder="أدخل الكود الخاص بك">
+            <input type="text" id="loginId" placeholder="أدخل الكود (مثال: admin)">
         </div>
         <div class="input-group">
             <label>كلمة السر:</label>
-            <input type="password" id="loginPassword" placeholder="••••••••">
+            <input type="password" id="loginPassword" placeholder="أدخل كلمة السر (مثال: 5656)">
         </div>
         <button type="button" class="btn" onclick="systemLogin()">دخول المنصة</button>
 
@@ -35,22 +35,24 @@
             const pass = document.getElementById('loginPassword').value.trim();
             const statusEl = document.getElementById('authStatus');
 
-            if (!id || !pass) {
-                alert("يرجى إدخال البيانات كاملة!");
+            if (!id || !pass) { alert("يرجى إدخال البيانات!"); return; }
+
+            // حسابك التجريبي المباشر للفرقة الأولى
+            if (id === "admin" && pass === "5656") {
+                localStorage.setItem('currentUser', JSON.stringify({ id: "5656", name: "أحمد سمير (تجريبي)", grade: "الفرقة الأولى", phone: "01000000000" }));
+                window.location.href = "student.html";
                 return;
             }
 
             statusEl.style.color = "#38bdf8";
-            statusEl.textContent = "⏳ جاري التحقق من البيانات سحابياً...";
+            statusEl.textContent = "⏳ جاري التحقق سحابياً...";
 
             try {
                 const res = await fetch(`${googleScriptUrl}?action=loginStudent&id=${id}&pass=${pass}`);
                 const data = await res.json();
-
                 if (data.success) {
                     localStorage.setItem('currentUser', JSON.stringify(data.student));
                     window.location.href = "student.html";
-                    return;
                 } else {
                     statusEl.style.color = "var(--accent-red)";
                     statusEl.textContent = "❌ بيانات الدخول غير صحيحة!";
