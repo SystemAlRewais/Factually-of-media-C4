@@ -7,29 +7,81 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container" style="max-width: 600px; text-align: right;">
-        <div class="admin-badge" id="gradeTitle">لوحة التحكم</div>
-        <h2 style="font-size: 1.2rem; margin-bottom: 15px;">إدارة شؤون ومحتوى الفرقة</h2>
+    <!-- شاشة تسجيل دخول الإدارة بحماية الباسورد -->
+    <div id="adminLoginModal" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(3,7,18,0.95); z-index:1000; justify-content:center; align-items:center;">
+        <div class="container" style="max-width:400px; text-align:right;">
+            <div class="admin-badge">حماية الإدارة العليا</div>
+            <h2 style="font-size:1.2rem; margin-bottom:15px;">تسجيل دخول المشرف</h2>
+            <div class="input-group" style="margin-bottom:10px;">
+                <label style="font-size:0.85rem;">اسم المستخدم:</label>
+                <input type="text" id="adminUser" placeholder="admin" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <div class="input-group" style="margin-bottom:15px;">
+                <label style="font-size:0.85rem;">كلمة المرور:</label>
+                <input type="password" id="adminPass" placeholder="••••" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <button class="btn" onclick="verifyAdminLogin()">دخول لوحة التحكم</button>
+            <p id="adminLoginError" style="color:var(--accent-red); font-size:0.8rem; margin-top:10px; text-align:center;"></p>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top:10px;">العودة للمنصة</button>
+        </div>
+    </div>
 
-        <!-- قسم إنشاء وتوليد حساب طالب جديد (جوه الإدارة زي ما طلبت) -->
-        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-            <h3 style="color: #10b981; font-size: 1rem; margin-bottom: 10px;">➕ إنشاء حساب وتوليد كود لطالب جديد</h3>
-            <div class="input-group" style="margin-bottom: 8px;">
-                <input type="text" id="newStudentName" placeholder="اسم الطالب الثلاثي" style="width:100%; padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
+    <!-- لوحة الإدارة الرئيسية -->
+    <div id="adminDashboard" style="display:none; max-width: 800px; margin: 20px auto; padding: 20px;" class="container">
+        <div style="display: flex; justify-content: space-between; align-items:center; margin-bottom: 20px;">
+            <div>
+                <div class="admin-badge" id="gradeTitle">لوحة التحكم</div>
+                <h2 style="font-size: 1.4rem;">إدارة شؤون ومحتوى الفرقة</h2>
             </div>
-            <div class="input-group" style="margin-bottom: 8px;">
-                <input type="text" id="newStudentPhone" placeholder="رقم الهاتف" style="width:100%; padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
-            </div>
-            <div class="input-group" style="margin-bottom: 10px;">
-                <input type="password" id="newStudentPass" placeholder="كلمة المرور" style="width:100%; padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
-            </div>
-            <button class="btn" onclick="addNewStudentFromAdmin()" style="background: #10b981; padding: 8px;">توليد كود وحفظ سحابياً</button>
-            <p id="adminRegStatus" style="font-size: 0.8rem; margin-top: 5px;"></p>
+            <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="width: auto; padding: 8px 15px;">خروج لاختيار الفرقة</button>
         </div>
 
-        <hr style="border: 0.5px solid var(--border-color); margin-bottom: 20px;">
+        <!-- قسم إنشاء وتوليد حساب طالب جديد (جوا الإدارة وبيروح شيت الطلاب مباشرة) -->
+        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+            <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 12px;">➕ إنشاء حساب وتوليد كود لطالب جديد</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="regName" placeholder="اسم الطالب الثلاثي" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                <input type="text" id="regPhone" placeholder="رقم الهاتف" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <input type="password" id="regPass" placeholder="كلمة المرور للطالب" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                <button class="btn" onclick="submitNewStudent()" style="background: #10b981; margin:0; height:100%;">توليد كود وحفظ سحابياً</button>
+            </div>
+            <p id="regStatus" style="font-size: 0.85rem; text-align: center;"></p>
+        </div>
 
-        <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'">العودة لاختيار الفرق</button>
+        <!-- قسم التحكم في المحاضرة والحضور الحي -->
+        <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid #38bdf8; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+            <h3 style="color: #38bdf8; font-size: 1.1rem; margin-bottom: 12px;">📡 إدارة المحاضرة والحضور الجغرافي</h3>
+            <div class="input-group" style="margin-bottom:10px;">
+                <input type="text" id="lectureSubject" placeholder="اسم المحاضرة / المادة" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" onclick="toggleLectureStatus(true)" style="background: #10b981;">فتح استقبال الحضور</button>
+                <button class="btn" onclick="toggleLectureStatus(false)" style="background: #ef4444;">إغلاق المحاضرة وأرشفة الكشف</button>
+            </div>
+        </div>
+
+        <!-- جدول الحضور الحي المحدث سحابياً -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 12px;">📋 كشف الحضور الحي لحظياً</h3>
+            <button class="btn btn-secondary" onclick="loadLiveAttendance()" style="margin-bottom: 10px; width:auto; padding:6px 12px;">تحديث الكشف</button>
+            <div style="overflow-x: auto;">
+                <table style="width:150%; text-align:right; font-size:0.85rem; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom:1px solid var(--border-color); color:var(--text-sub);">
+                            <th style="padding:8px;">الوقت</th>
+                            <th style="padding:8px;">الكود الجامعي</th>
+                            <th style="padding:8px;">اسم الطالب</th>
+                            <th style="padding:8px;">المادة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+                        <tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-sub);">جاري تحميل الحضور...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
@@ -37,20 +89,32 @@
         const currentGrade = localStorage.getItem('adminGrade') || 'الفرقة الأولى';
         document.getElementById('gradeTitle').textContent = "إدارة: " + currentGrade;
 
-        async function addNewStudentFromAdmin() {
-            let name = document.getElementById('newStudentName').value.trim();
-            let phone = document.getElementById('newStudentPhone').value.trim();
-            let pass = document.getElementById('newStudentPass').value.trim();
-            let statusEl = document.getElementById('adminRegStatus');
+        function verifyAdminLogin() {
+            let u = document.getElementById('adminUser').value.trim();
+            let p = document.getElementById('adminPass').value.trim();
+            if(u === "admin" && p === "5656") {
+                document.getElementById('adminLoginModal').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                loadLiveAttendance();
+            } else {
+                document.getElementById('adminLoginError').textContent = "خطأ في اسم المستخدم أو كلمة المرور (admin / 5656)";
+            }
+        }
 
-            if(!name || !phone || !pass) { alert("يرجى إدخال كافة بيانات الطالب!"); return; }
+        async function submitNewStudent() {
+            let name = document.getElementById('regName').value.trim();
+            let phone = document.getElementById('regPhone').value.trim();
+            let pass = document.getElementById('regPass').value.trim();
+            let statusEl = document.getElementById('regStatus');
+
+            if(!name || !phone || !pass) { alert("يرجى ملء كافة بيانات الطالب!"); return; }
 
             let randomId = 'AZ' + Math.floor(100000 + Math.random() * 900000);
             statusEl.style.color = "#38bdf8";
-            statusEl.textContent = "⏳ جاري توليد الكود والحفظ...";
+            statusEl.textContent = "⏳ جاري توليد الكود وحفظه سحابياً في شيت الطلاب...";
 
             try {
-                await fetch(googleScriptUrl, {
+                let res = await fetch(googleScriptUrl, {
                     method: 'POST',
                     body: JSON.stringify({
                         action: "registerStudent",
@@ -61,17 +125,63 @@
                         password: pass
                     })
                 });
-
-                statusEl.style.color = "#10b981";
-                statusEl.textContent = `✅ تم بنجاح! كود الطالب: ${randomId}`;
-                alert(`🎉 تم إنشاء الحساب بنجاح للفرقة (${currentGrade})!\nكود الطالب: ${randomId}`);
-                document.getElementById('newStudentName').value = '';
-                document.getElementById('newStudentPhone').value = '';
-                document.getElementById('newStudentPass').value = '';
+                let data = await res.json();
+                if(data.success) {
+                    statusEl.style.color = "#10b981";
+                    statusEl.textContent = `✅ تم بنجاح! كود الطالب الجامعي: ${randomId}`;
+                    alert(`🎉 تم إنشاء الحساب بنجاح لـ (${currentGrade})!\nكود الطالب: ${randomId}`);
+                    document.getElementById('regName').value = '';
+                    document.getElementById('regPhone').value = '';
+                    document.getElementById('regPass').value = '';
+                } else {
+                    throw new Error();
+                }
             } catch(e) {
                 statusEl.style.color = "red";
-                statusEl.textContent = "❌ خطأ في الاتصال بالسحابة.";
+                statusEl.textContent = "❌ حدث خطأ أثناء الحفظ بالسحابة.";
             }
+        }
+
+        async function toggleLectureStatus(isOpen) {
+            let subject = document.getElementById('lectureSubject').value.trim() || "محاضرة عامة";
+            try {
+                await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "toggleAttendance",
+                        grade: currentGrade,
+                        subject: subject,
+                        isOpen: isOpen
+                    })
+                });
+                alert(isOpen ? "🟢 تم فتح تسجيل الحضور للطلاب!" : "🔴 تم إغلاق المحاضرة وأرشفة الكشف سحابياً!");
+                if(!isOpen) archiveLectureServer();
+            } catch(e) { alert("خطأ في الاتصال بالسحابة"); }
+        }
+
+        async function archiveLectureServer() {
+            let subject = document.getElementById('lectureSubject').value.trim() || "محاضرة عامة";
+            await fetch(googleScriptUrl, {
+                method: 'POST',
+                body: JSON.stringify({ action: "archiveLecture", grade: currentGrade, subject: subject })
+            });
+            loadLiveAttendance();
+        }
+
+        async function loadLiveAttendance() {
+            try {
+                let res = await fetch(`${googleScriptUrl}?action=getLiveAttendance&grade=${encodeURIComponent(currentGrade)}`);
+                let data = await res.json();
+                let tbody = document.getElementById('attendanceTableBody');
+                tbody.innerHTML = "";
+                if(data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-sub);">لا يوجد حضور مسجل حتى الآن.</td></tr>`;
+                    return;
+                }
+                data.forEach(row => {
+                    tbody.innerHTML += `<tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">${row.time}</td><td style="padding:8px; color:#38bdf8; font-weight:bold;">${row.id}</td><td style="padding:8px;">${row.name}</td><td style="padding:8px;">${row.subject}</td></tr>`;
+                });
+            } catch(e) {}
         }
     </script>
 </body>
