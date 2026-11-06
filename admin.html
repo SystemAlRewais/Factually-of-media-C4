@@ -10,93 +10,86 @@
     <div class="container" style="max-width: 1000px; text-align: right;">
         <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--accent-red);">🔐 لوحة التحكم المركزية</div>
         <h2 id="adminTitleHeader">إدارة الفرقة: ...</h2>
-        <p style="color: var(--text-sub);">تحكم كامل سحابياً (مقررات، جداول، GPS، حضور حي، وأرشيف، وإدارة الطلاب).</p>
+        <p style="color: var(--text-sub);">تحكم كامل سحابياً (إضافة، تعديل، حذف المقررات والجداول، GPS، حضور حي، وأرشيف).</p>
 
-        <!-- 1. إعدادات الحضور الجغرافي (GPS) والمادة -->
+        <!-- 1. إعدادات الـ GPS -->
         <div class="card" style="border-color: #38bdf8;">
             <h3 style="color: #38bdf8;">📍 إعدادات المحاضرة والحضور الجغرافي (GPS)</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="text" id="activeSubjectName" placeholder="اسم المادة (مثال: الصحافة المتخصصة)">
-                <input type="text" id="gpsLat" placeholder="خط العرض (Latitude)">
-                <input type="text" id="gpsLng" placeholder="خط الطول (Longitude)">
+            <div class="input-group">
+                <label>اسم المادة الدراسية:</label>
+                <input type="text" id="activeSubjectName" placeholder="مثال: الصحافة المتخصصة">
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="number" id="gpsRange" placeholder="النطاق المسموح بالمتر (مثال: 1500)">
-                <button class="btn" onclick="saveLectureSettings()" style="background: #38bdf8; margin-top:0;">حفظ إعدادات المادة والموقع</button>
+            <div class="input-group">
+                <label>رابط موقع الكلية من Google Maps:</label>
+                <input type="text" id="mapLinkInput" placeholder="https://maps.app.goo.gl/...">
             </div>
-            <div style="border-top: 1px solid var(--border-color); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                <span id="attStatusText" style="font-weight: bold;">حالة التسجيل: مغلق</span>
-                <button id="toggleAttBtn" class="btn" onclick="toggleAttendance()" style="background: var(--accent-green); width: auto; padding: 8px 20px;">🟢 فتح التسجيل للمادة</button>
+            <div class="input-group">
+                <label>النطاق الجغرافي المسموح للتسجيل (بالمتر):</label>
+                <input type="number" id="gpsRange" placeholder="مثال: 2000">
+            </div>
+            <button class="btn" onclick="saveLectureSettings()" style="background: #38bdf8; margin-bottom: 12px;">💾 حفظ إعدادات المحاضرة والموقع سحابياً</button>
+            
+            <div style="border-top: 1px solid var(--border-color); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span id="attStatusText" style="font-weight: bold; color: var(--accent-red);">حالة التسجيل: مغلق 🔒</span>
+                <button id="toggleAttBtn" class="btn" onclick="toggleAttendance()" style="background: var(--accent-green); width: auto; padding: 10px 25px;">🟢 فتح التسجيل للمادة</button>
             </div>
         </div>
 
-        <!-- 2. إدارة المقررات والكتب (رفع، تعديل، حذف) -->
+        <!-- 2. إدارة المقررات والكتب (إضافة، تعديل، حذف) -->
         <div class="card">
             <h3 style="color: #f59e0b;">📚 إدارة المقررات والكتب الدراسية</h3>
             <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="text" id="bookTitle" placeholder="اسم الكتاب أو المرجع">
-                <input type="text" id="bookLink" placeholder="رابط التحميل (PDF / Drive)">
-                <button class="btn" onclick="addContent('book')" style="background: #f59e0b; margin-top:0;">إضافة كتاب</button>
+                <input type="text" id="bookTitle" placeholder="اسم الكتاب">
+                <input type="text" id="bookLink" placeholder="رابط التحميل">
+                <button class="btn" onclick="addOrUpdateContent('book')" id="bookBtn" style="background: #f59e0b; margin-top:0;">إضافة كتاب</button>
             </div>
-            <div id="booksListContainer" style="max-height: 150px; overflow-y: auto;">جاري التحميل...</div>
+            <div id="booksListContainer" style="max-height: 180px; overflow-y: auto;">جاري التحميل...</div>
         </div>
 
-        <!-- 3. إدارة جداول المحاضرات -->
+        <!-- 3. إدارة جداول المحاضرات (إضافة، تعديل، حذف) -->
         <div class="card">
             <h3 style="color: #38bdf8;">📅 إدارة جداول المحاضرات</h3>
             <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="text" id="schTitle" placeholder="عنوان الجدول (مثال: جدول الأسبوع الأول)">
+                <input type="text" id="schTitle" placeholder="عنوان الجدول">
                 <input type="text" id="schLink" placeholder="رابط الجدول">
-                <button class="btn" onclick="addContent('schedule')" style="background: #38bdf8; margin-top:0;">إضافة جدول</button>
+                <button class="btn" onclick="addOrUpdateContent('schedule')" id="schBtn" style="background: #38bdf8; margin-top:0;">إضافة جدول</button>
             </div>
-            <div id="schedulesListContainer" style="max-height: 150px; overflow-y: auto;">جاري التحميل...</div>
+            <div id="schedulesListContainer" style="max-height: 180px; overflow-y: auto;">جاري التحميل...</div>
         </div>
 
-        <!-- 4. إدارة جداول الاختبارات -->
+        <!-- 4. إدارة جداول الاختبارات (إضافة، تعديل، حذف) -->
         <div class="card">
             <h3 style="color: #10b981;">📝 إدارة جداول الاختبارات والامتحانات</h3>
             <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="text" id="examTitle" placeholder="عنوان الجدول (مثال: جدول الميدترم)">
+                <input type="text" id="examTitle" placeholder="عنوان الجدول">
                 <input type="text" id="examLink" placeholder="رابط الجدول">
-                <button class="btn" onclick="addContent('exam')" style="background: #10b981; margin-top:0;">إضافة اختبار</button>
+                <button class="btn" onclick="addOrUpdateContent('exam')" id="examBtn" style="background: #10b981; margin-top:0;">إضافة اختبار</button>
             </div>
-            <div id="examsListContainer" style="max-height: 150px; overflow-y: auto;">جاري التحميل...</div>
+            <div id="examsListContainer" style="max-height: 180px; overflow-y: auto;">جاري التحميل...</div>
         </div>
 
-        <!-- 5. السجل الحي للحضور وإنهاء المحاضرة (أرشفة) -->
+        <!-- 5. السجل الحي وأرشفة المحاضرة -->
         <div class="card">
-            <h3 style="color: #10b981;">📊 السجل الحي للحضور (لحظة بلحظة)</h3>
+            <h3 style="color: #10b981;">📊 السجل الحي للحضور</h3>
             <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                 <button class="btn btn-secondary" onclick="loadLiveAttendance()" style="flex:1; margin-top:0;">🔄 تحديث السجل</button>
-                <button class="btn" onclick="endAndArchiveLecture()" style="background: var(--accent-red); flex:1; margin-top:0;">🛑 إنهاء المحاضرة وأرشفة الكشف (PDF/Excel)</button>
+                <button class="btn" onclick="endAndArchiveLecture()" style="background: var(--accent-red); flex:1; margin-top:0;">🛑 إنهاء المحاضرة وأرشفة الكشف</button>
             </div>
-            <div id="liveAttendanceContainer" style="overflow-x: auto; max-height: 200px;">
-                <p style="color: var(--text-sub);">لا توجد تسجيلات حالياً.</p>
-            </div>
+            <div id="liveAttendanceContainer" style="overflow-x: auto; max-height: 200px;"><p style="color: var(--text-sub);">لا توجد تسجيلات حالياً.</p></div>
         </div>
 
-        <!-- 6. الأرشيف السابق للمحاضرات -->
+        <!-- 6. إدارة الطلاب -->
         <div class="card">
-            <h3 style="color: #38bdf8;">📁 أرشيف المحاضرات السابقة</h3>
-            <div id="archiveContainer" style="max-height: 150px; overflow-y: auto;">
-                <p style="color: var(--text-sub);">جاري جلب الأرشيف...</p>
-            </div>
+            <h3 style="color: #a855f7;">📋 إدارة شؤون الطلاب</h3>
+            <button class="btn btn-secondary" onclick="loadStudentsManagement()" style="margin-bottom: 10px; width: auto; padding: 8px 15px;">🔄 تحديث الطلاب</button>
+            <div id="studentsManagementContainer" style="overflow-x: auto; max-height: 250px;"><p style="color: var(--text-sub);">جاري التحميل...</p></div>
         </div>
 
-        <!-- 7. إدارة بيانات الطلاب الشاملة (تعديل، تبنيد/حظر، حذف، متابعة النشاط) -->
-        <div class="card">
-            <h3 style="color: #a855f7;">📋 إدارة شؤون الطلاب (تعديل، حظر، ومتابعة النشاط)</h3>
-            <button class="btn btn-secondary" onclick="loadStudentsManagement()" style="margin-bottom: 10px; width: auto; padding: 8px 15px;">🔄 تحديث قائمة الطلاب</button>
-            <div id="studentsManagementContainer" style="overflow-x: auto; max-height: 300px;">
-                <p style="color: var(--text-sub);">جاري التحميل...</p>
-            </div>
-        </div>
-
-        <!-- إرسال إعلانات أو شكاوى -->
+        <!-- 7. إرسال إعلان -->
         <div class="card">
             <h3 style="color: #f59e0b;">📢 إرسال إعلان أو تنبيه للدفعة</h3>
             <textarea id="adminAnnouncement" placeholder="اكتب التنبيه أو لينك الجروب هنا..." rows="2" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color); margin-bottom:10px;"></textarea>
-            <button class="btn" onclick="sendAnnouncement()" style="background: #f59e0b;">نشر الإعلان</button>
+            <button class="btn" onclick="sendAnnouncement()" style="background: #f59e0b;">نشر التنبيه للطلاب</button>
         </div>
 
         <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="margin-top: 15px;">⬅️ العودة لاختيار فرقة أخرى</button>
@@ -107,19 +100,19 @@
         const currentGrade = localStorage.getItem('adminSelectedGrade') || "الفرقة الأولى";
         document.getElementById('adminTitleHeader').textContent = `إدارة الفرقة: ${currentGrade}`;
         let isOpenState = false;
+        let editingOriginalTitle = { book: null, schedule: null, exam: null };
 
         async function saveLectureSettings() {
             let subject = document.getElementById('activeSubjectName').value.trim();
-            let lat = document.getElementById('gpsLat').value;
-            let lng = document.getElementById('gpsLng').value;
-            let range = document.getElementById('gpsRange').value;
-            if(!subject) { alert("أدخل اسم المادة أولاً"); return; }
+            let mapLink = document.getElementById('mapLinkInput').value.trim();
+            let range = document.getElementById('gpsRange').value.trim();
+            if(!subject || !mapLink) { alert("أدخل اسم المادة ورابط الخريطة!"); return; }
 
             await fetch(googleScriptUrl, {
                 method: 'POST',
-                body: JSON.stringify({ action: "saveLectureSettings", grade: currentGrade, subject, lat, lng, range })
+                body: JSON.stringify({ action: "saveLectureSettings", grade: currentGrade, subject, mapLink, range: range || 2000 })
             });
-            alert("📍 تم حفظ إعدادات المادة والموقع بنجاح!");
+            alert("📍 تم حفظ الإعدادات بنجاح!");
         }
 
         async function toggleAttendance() {
@@ -135,20 +128,29 @@
             });
         }
 
-        async function addContent(type) {
+        // دالة إضافة أو تعديل محتوى (كتاب، جدول محاضرات، جدول اختبارات)
+        async function addOrUpdateContent(type) {
             let tId = type === 'book' ? 'bookTitle' : (type === 'schedule' ? 'schTitle' : 'examTitle');
             let lId = type === 'book' ? 'bookLink' : (type === 'schedule' ? 'schLink' : 'examLink');
             let title = document.getElementById(tId).value.trim();
             let link = document.getElementById(lId).value.trim();
             if(!title || !link) { alert("أكمل البيانات"); return; }
 
+            let originalTitle = editingOriginalTitle[type];
+            let actionName = originalTitle ? "updateGradeContent" : "addGradeContent";
+
             await fetch(googleScriptUrl, {
                 method: 'POST',
-                body: JSON.stringify({ action: "addGradeContent", grade: currentGrade, type, title, link })
+                body: JSON.stringify({ action: actionName, grade: currentGrade, type, title, link, originalTitle })
             });
-            alert("✅ تمت الإضافة بنجاح!");
+
+            alert(originalTitle ? "✏️ تم تعديل البيانات بنجاح!" : "✅ تمت الإضافة بنجاح!");
+            
             document.getElementById(tId).value = '';
             document.getElementById(lId).value = '';
+            editingOriginalTitle[type] = null;
+            document.getElementById(type === 'book' ? 'bookBtn' : (type === 'schedule' ? 'schBtn' : 'examBtn')).textContent = type === 'book' ? "إضافة كتاب" : (type === 'schedule' ? "إضافة جدول" : "إضافة اختبار");
+            
             loadContentList();
         }
 
@@ -157,16 +159,52 @@
                 const res = await fetch(`${googleScriptUrl}?action=getGradeData&grade=${currentGrade}`);
                 const data = await res.json();
                 
-                document.getElementById('booksListContainer').innerHTML = data.books.map((b, idx) => `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #222;"><span>${b.title}</span> <button onclick="deleteContent('book', '${b.title}')" style="background:red; color:#fff; border:none; padding:2px 6px; border-radius:4px;">حذف</button></div>`).join('') || "لا توجد كتب مضافة.";
-                document.getElementById('schedulesListContainer').innerHTML = data.schedules.map((s, idx) => `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #222;"><span>${s.title}</span> <button onclick="deleteContent('schedule', '${s.title}')" style="background:red; color:#fff; border:none; padding:2px 6px; border-radius:4px;">حذف</button></div>`).join('') || "لا توجد جداول مضافة.";
-                document.getElementById('examsListContainer').innerHTML = data.exams.map((e, idx) => `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #222;"><span>${e.title}</span> <button onclick="deleteContent('exam', '${e.title}')" style="background:red; color:#fff; border:none; padding:2px 6px; border-radius:4px;">حذف</button></div>`).join('') || "لا توجد اختبارات مضافة.";
+                document.getElementById('booksListContainer').innerHTML = data.books.map(b => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #222;">
+                        <span>📖 ${b.title}</span>
+                        <div>
+                            <button onclick="prepareEdit('book', '${b.title}', '${b.link}')" style="background:#38bdf8; color:#fff; border:none; padding:3px 8px; border-radius:4px; margin-left:5px;">تعديل</button>
+                            <button onclick="deleteContent('book', '${b.title}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button>
+                        </div>
+                    </div>`).join('') || "لا توجد كتب مضافة.";
+
+                document.getElementById('schedulesListContainer').innerHTML = data.schedules.map(s => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #222;">
+                        <span>🗓️ ${s.title}</span>
+                        <div>
+                            <button onclick="prepareEdit('schedule', '${s.title}', '${s.link}')" style="background:#38bdf8; color:#fff; border:none; padding:3px 8px; border-radius:4px; margin-left:5px;">تعديل</button>
+                            <button onclick="deleteContent('schedule', '${s.title}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button>
+                        </div>
+                    </div>`).join('') || "لا توجد جداول مضافة.";
+
+                document.getElementById('examsListContainer').innerHTML = data.exams.map(e => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #222;">
+                        <span>📝 ${e.title}</span>
+                        <div>
+                            <button onclick="prepareEdit('exam', '${e.title}', '${e.link}')" style="background:#38bdf8; color:#fff; border:none; padding:3px 8px; border-radius:4px; margin-left:5px;">تعديل</button>
+                            <button onclick="deleteContent('exam', '${e.title}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button>
+                        </div>
+                    </div>`).join('') || "لا توجد اختبارات مضافة.";
             } catch(e) {}
         }
         loadContentList();
 
+        function prepareEdit(type, title, link) {
+            let tId = type === 'book' ? 'bookTitle' : (type === 'schedule' ? 'schTitle' : 'examTitle');
+            let lId = type === 'book' ? 'bookLink' : (type === 'schedule' ? 'schLink' : 'examLink');
+            document.getElementById(tId).value = title;
+            document.getElementById(lId).value = link;
+            editingOriginalTitle[type] = title;
+            document.getElementById(type === 'book' ? 'bookBtn' : (type === 'schedule' ? 'schBtn' : 'examBtn')).textContent = "حفظ التعديل";
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
         async function deleteContent(type, title) {
-            if(confirm(`حذف "${title}"؟`)) {
-                await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "deleteGradeContent", grade: currentGrade, type, title }) });
+            if(confirm(`هل أنت متأكد من حذف "${title}"؟`)) {
+                await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "deleteGradeContent", grade: currentGrade, type, title })
+                });
                 loadContentList();
             }
         }
@@ -177,48 +215,36 @@
                 const data = await res.json();
                 const container = document.getElementById('liveAttendanceContainer');
                 if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد تسجيلات حضور حالياً.</p>"; return; }
-                container.innerHTML = `<table><tr><th>الاسم</th><th>الكود</th><th>المادة</th><th>الوقت</th><th>الموقع</th></tr>` + 
-                    data.map(r => `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.subject}</td><td>${r.time}</td><td><a href="${r.locationLink}" target="_blank" style="color:#10b981;">خريطة</a></td></tr>`).join('') + `</table>`;
+                container.innerHTML = `<table><tr><th>الاسم</th><th>الكود</th><th>المادة</th><th>الوقت</th></tr>` + 
+                    data.map(r => `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.subject}</td><td>${r.time}</td></tr>`).join('') + `</table>`;
             } catch(e) {}
         }
         loadLiveAttendance();
 
         async function endAndArchiveLecture() {
-            if(confirm("هل تريد إنهاء المحاضرة الحالية وترحيل الكشف للأرشيف؟")) {
-                let subject = document.getElementById('activeSubjectName').value.trim() || "مادة عامةخ";
+            if(confirm("إنهاء المحاضرة وترحيل الكشف للأرشيف؟")) {
+                let subject = document.getElementById('activeSubjectName').value.trim() || "محاضرة";
                 await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "archiveLecture", grade: currentGrade, subject }) });
-                alert("📊 تم أرشفة كشف الحضور بنجاح وتحويله للأرشيف!");
+                alert("📊 تم أرشفة الحضور بنجاح!");
                 loadLiveAttendance();
-                loadArchive();
             }
         }
-
-        async function loadArchive() {
-            try {
-                const res = await fetch(`${googleScriptUrl}?action=getArchive&grade=${currentGrade}`);
-                const data = await res.json();
-                const container = document.getElementById('archiveContainer');
-                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا يوجد أرشيف سابق.</p>"; return; }
-                container.innerHTML = data.map(a => `<div style="padding:8px; background:rgba(255,255,255,0.03); border-radius:6px; margin-bottom:5px; display:flex; justify-content:space-between;"><span>📚 ${a.subject} (${a.date}) - الحضور: ${a.count} طالب</span> <a href="${a.csvData}" download="Archive_${a.subject}.csv" style="color:#38bdf8;">تحميل CSV</a></div>`).join('');
-            } catch(e) {}
-        }
-        loadArchive();
 
         async function loadStudentsManagement() {
             try {
                 const res = await fetch(`${googleScriptUrl}?action=getAllStudents&grade=${currentGrade}`);
                 const data = await res.json();
                 const container = document.getElementById('studentsManagementContainer');
-                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد طلاب مسجلين.</p>"; return; }
-                container.innerHTML = `<table><tr><th>الكود</th><th>الاسم</th><th>الهاتف</th><th>النشاط / الحضور</th><th>إجراءات (حظر / حذف)</th></tr>` +
-                    data.map(st => `<tr><td>${st.id}</td><td>${st.name}</td><td>${st.phone}</td><td>${st.activity || 'نشط'}</td><td><button onclick="banOrDeleteStudent('${st.id}', 'delete')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button></td></tr>`).join('') + `</table>`;
+                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد طلاب.</p>"; return; }
+                container.innerHTML = `<table><tr><th>الكود</th><th>الاسم</th><th>الهاتف</th><th>إجراء</th></tr>` +
+                    data.map(st => `<tr><td>${st.id}</td><td>${st.name}</td><td>${st.phone}</td><td><button onclick="deleteStudent('${st.id}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button></td></tr>`).join('') + `</table>`;
             } catch(e) {}
         }
         loadStudentsManagement();
 
-        async function banOrDeleteStudent(id, type) {
-            if(confirm("هل أنت متأكد من تنفيذ هذا الإجراء على الطالب؟")) {
-                await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "manageStudent", id, type }) });
+        async function deleteStudent(id) {
+            if(confirm("حذف الطالب نهائياً؟")) {
+                await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "manageStudent", id, type: 'delete' }) });
                 loadStudentsManagement();
             }
         }
