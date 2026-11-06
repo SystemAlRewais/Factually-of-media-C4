@@ -7,74 +7,65 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .student-header { background: linear-gradient(135deg, #1e1b4b 0%, #111827 100%); padding: 25px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; text-align: right; }
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .info-card { background: var(--card-bg); padding: 18px; border-radius: 16px; border: 1px solid var(--border-color); text-align: right; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .info-card { background: var(--card-bg); padding: 18px; border-radius: 16px; border: 1px solid var(--border-color); text-align: right; }
         .info-card span { display: block; font-size: 0.8rem; color: var(--text-sub); margin-bottom: 5px; }
-        .info-card h4 { font-size: 1.1rem; color: #38bdf8; }
+        .info-card h4 { font-size: 1.05rem; color: #38bdf8; }
         .section-box { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px; text-align: right; }
-        .quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 10px; }
-        .quick-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; color: #fff; text-align: center; cursor: pointer; transition: 0.3s; font-family: 'Cairo'; }
-        .quick-btn:hover { background: var(--primary-color); border-color: var(--primary-color); }
     </style>
 </head>
 <body>
     <div class="container" style="max-width: 800px; text-align: right;">
         
-        <!-- الترحيب ورأس الصفحة -->
         <div class="student-header">
             <span style="color: #38bdf8; font-size: 0.85rem; font-weight: 700;">لوحة الطالب</span>
             <h2 id="studentNameHeader" style="margin: 5px 0; font-size: 1.5rem;">مرحبًا، ...</h2>
-            <p style="margin: 0; font-size: 0.85rem; color: var(--text-sub);">كل ما تحتاجه للدراسة والمقررات والتحديثات الأكاديمية في مكان واحد.</p>
+            <p style="margin: 0; font-size: 0.85rem; color: var(--text-sub);">كل ما تحتاجه لدراستك ومقرراتك الخاصة بفرقتك الأكاديمية.</p>
         </div>
 
-        <!-- مربعات بيانات الطالب (تتحكم فيها الإدارة) -->
         <div class="info-grid">
-            <div class="info-card">
-                <span>كود الطالب</span>
-                <h4 id="studentIdVal">-</h4>
-            </div>
-            <div class="info-card">
-                <span>الفرقة الدراسية</span>
-                <h4 id="studentGradeVal">-</h4>
-            </div>
-            <div class="info-card">
-                <span>البرنامج الأكاديمي</span>
-                <h4 id="studentProgramVal">كلية الإعلام</h4>
-            </div>
-            <div class="info-card">
-                <span>السنة الأكاديمية</span>
-                <h4 id="academicYearVal">2026/2027</h4>
+            <div class="info-card"><span>كود الطالب</span><h4 id="studentIdVal">-</h4></div>
+            <div class="info-card"><span>الفرقة المقيد بها</span><h4 id="studentGradeVal">-</h4></div>
+            <div class="info-card"><span>البرنامج الأكاديمي</span><h4>كلية الإعلام</h4></div>
+            <div class="info-card"><span>السنة الأكاديمية</span><h4>2026/2027</h4></div>
+        </div>
+
+        <!-- زر الذهاب لنظام الحضور الجغرافي الخاص بك -->
+        <div style="margin-bottom: 20px; text-align: center;">
+            <button class="btn" onclick="window.location.href='subjects.html'" style="background: #10b981; font-size: 1.05rem; padding: 15px;">📍 الذهاب لنظام تسجيل الحضور (GPS)</button>
+        </div>
+
+        <!-- لوحة إعلانات الدفعة -->
+        <div class="section-box" style="border-color: #a855f7;">
+            <h3 style="color: #a855f7; font-size: 1.1rem; margin-bottom: 10px;">📢 إعلانات وتنبيهات الدفعة الهامة</h3>
+            <div id="announcementBox" style="background: rgba(168, 85, 247, 0.05); padding: 12px; border-radius: 8px; font-size: 0.9rem; color: #fff;">
+                جاري التحقق من الإعلانات...
             </div>
         </div>
 
-        <!-- زر الانتقال لتسجيل الحضور الجغرافي الخاص بك -->
-        <div style="margin-bottom: 20px;">
-            <button class="btn" onclick="window.location.href='subjects.html'" style="background: #10b981; font-size: 1.05rem; padding: 16px;">📍 الذهاب لنظام الحضور الجغرافي (GPS)</button>
-        </div>
-
-        <!-- المقررات الدراسية (مرفوعة من الإدارة) -->
+        <!-- المقررات والكتب الخاصة بفرقة الطالب فقط -->
         <div class="section-box">
-            <h3 style="color: #38bdf8; font-size: 1.1rem; margin-bottom: 12px;">📚 مقرراتي الدراسية</h3>
-            <div id="studentBooksContainer">
-                <p style="color: var(--text-sub); font-size: 0.9rem;">جاري تحميل مقرراتك الدراسية...</p>
-            </div>
+            <h3 style="color: #f59e0b; font-size: 1.1rem; margin-bottom: 12px;">📚 المقررات والكتب الدراسية</h3>
+            <div id="studentBooks"><p style="color: var(--text-sub); font-size: 0.9rem;">جاري التحميل...</p></div>
         </div>
 
-        <!-- إجراءات سريعة (درجات وأرشيف) -->
+        <!-- جدول المحاضرات -->
         <div class="section-box">
-            <h3 style="color: #f59e0b; font-size: 1.1rem; margin-bottom: 12px;">⚡ إجراءات سريعة</h3>
-            <div class="quick-links">
-                <div class="quick-btn" onclick="alert('سجل درجات أعمال السنة والنهائي سيظهر فور اعتماده من الإدارة.')">📊 الدرجات والنتائج</div>
-                <div class="quick-btn" onclick="alert('تقويم المحاضرات نشط ومتصل بالسحابة.')">📅 التقويم</div>
-                <div class="quick-btn" onclick="window.scrollTo(0, document.body.scrollHeight);">✉️ الشكاوى والدعم</div>
-            </div>
+            <h3 style="color: #38bdf8; font-size: 1.1rem; margin-bottom: 12px;">📅 جدول المحاضرات</h3>
+            <div id="studentSchedules"><p style="color: var(--text-sub); font-size: 0.9rem;">جاري التحميل...</p></div>
         </div>
 
-        <!-- صندوق الشكاوى والمقترحات -->
+        <!-- جدول الاختبارات -->
+        <div class="section-box">
+            <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 12px;">📝 جدول الاختبارات والامتحانات</h3>
+            <div id="studentExams"><p style="color: var(--text-sub); font-size: 0.9rem;">جاري التحميل...</p></div>
+        </div>
+
+        <!-- الشكاوى -->
         <div class="section-box">
             <h3 style="color: var(--accent-red); font-size: 1.1rem; margin-bottom: 12px;">✉️ إرسال شكوى أو مقترح للإدارة</h3>
-            <textarea id="studentComplaint" placeholder="اكتب رسالتك أو استفسارك هنا..." rows="3" style="width: 100%; padding: 12px; background: #030712; border: 1px solid var(--border-color); color: #fff; border-radius: 10px; margin-bottom: 10px;"></textarea>
-            <button class="btn" onclick="sendComplaintToAdmin()" style="background: var(--accent-red); width: auto; padding: 10px 25px;">إرسال للإدارة</button>
+            <textarea id="studentComplaint" placeholder="اكتب شكواك أو استفسارك هنا..." rows="2" style="width: 100%; padding: 10px; background: #030712; border: 1px solid var(--border-color); color: #fff; border-radius: 8px; margin-bottom: 10px;"></textarea>
+            <button class="btn" onclick="sendComplaint()" style="background: var(--accent-red); width: auto; padding: 8px 20px;">إرسال الشكوى</button>
         </div>
 
         <button class="btn btn-secondary" onclick="logout()" style="margin-top: 10px;">🚪 تسجيل الخروج</button>
@@ -89,48 +80,34 @@
             document.getElementById('studentNameHeader').textContent = `مرحبًا، ${currentUser.name}`;
             document.getElementById('studentIdVal').textContent = currentUser.id;
             document.getElementById('studentGradeVal').textContent = currentUser.grade;
-            loadStudentDataFromServer();
+            loadStudentPageData();
         }
 
-        async function loadStudentDataFromServer() {
+        async function loadStudentPageData() {
             try {
-                // جلب الكتب والمقررات الخاصة بفرقة الطالب والتي رفعتها الإدارة
-                const res = await fetch(`${googleScriptUrl}?action=getDashboardData&grade=${currentUser.grade}`);
+                const res = await fetch(`${googleScriptUrl}?action=getGradeData&grade=${currentUser.grade}`);
                 const data = await res.json();
                 
-                const container = document.getElementById('studentBooksContainer');
-                if(data.books && data.books.length > 0) {
-                    container.innerHTML = data.books.map(b => `
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color);">
-                            <span>📖 ${b.title}</span>
-                            <a href="${b.link}" target="_blank" style="background: var(--primary-color); color: #fff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 0.85rem;">تحميل الكتاب</a>
-                        </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = `<p style="color: var(--text-sub); font-size: 0.9rem;">لا توجد مقررات مسجلة بعد. ستظهر مقرراتك هنا بمجرد إتمام الإدارة لتسجيلها.</p>`;
-                }
-            } catch(e) {
-                document.getElementById('studentBooksContainer').innerHTML = `<p style="color: var(--accent-red);">تعذر جلب البيانات من السحابة.</p>`;
-            }
+                document.getElementById('studentBooks').innerHTML = data.books.map(b => `<div style="padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;"><span>📖 ${b.title}</span><a href="${b.link}" target="_blank" style="color:#f59e0b; text-decoration:underline; font-size:0.85rem;">تحميل الكتاب</a></div>`).join('') || "لا توجد كتب مضافة بعد.";
+                
+                document.getElementById('studentSchedules').innerHTML = data.schedules.map(s => `<div style="padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;"><span>🗓️ ${s.title}</span><a href="${s.link}" target="_blank" style="color:#38bdf8; text-decoration:underline; font-size:0.85rem;">عرض الجدول</a></div>`).join('') || "لا يوجد جدول محاضرات مضاف بعد.";
+
+                document.getElementById('studentExams').innerHTML = data.exams.map(e => `<div style="padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;"><span>📝 ${e.title}</span><a href="${e.link}" target="_blank" style="color:#10b981; text-decoration:underline; font-size:0.85rem;">عرض الجدول</a></div>`).join('') || "لا يوجد جدول امتحانات مضاف بعد.";
+
+                document.getElementById('announcementBox').innerHTML = data.announcements.length > 0 ? data.announcements[data.announcements.length - 1].message : "لا توجد إعلانات جديدة حالياً.";
+
+            } catch(e) {}
         }
 
-        async function sendComplaintToAdmin() {
-            const text = document.getElementById('studentComplaint').value.trim();
-            if(!text) { alert("أكتب نص الشكوى أولاً!"); return; }
-            
-            alert("تم إرسال شكواك للإدارة بنجاح وسجلت في السحابة.");
-            document.getElementById('studentComplaint').value = '';
-            
-            await fetch(googleScriptUrl, {
-                method: 'POST',
-                body: JSON.stringify({ action: "sendComplaint", id: currentUser.id, name: currentUser.name, text: text })
-            }).catch(()=>{});
+        async function sendComplaint() {
+            let txt = document.getElementById('studentComplaint'].value.trim();
+            if(!txt) return;
+            alert("تم إرسال شكواك للإدارة بنجاح.");
+            document.getElementById('studentComplaint'].value = '';
+            await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "sendComplaint", grade: currentUser.grade, id: currentUser.id, name: currentUser.name, text: txt }) }).catch(()=>{});
         }
 
-        function logout() {
-            localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
-        }
+        function logout() { localStorage.clear(); window.location.href = "index.html"; }
     </script>
 </body>
 </html>
