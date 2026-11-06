@@ -5,24 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الطالب | المنصة التعليمية</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .grid-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
-        .forum-box { max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border-color); }
-        .msg { font-size: 13px; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .msg span { color: #38bdf8; font-weight: bold; }
-    </style>
 </head>
 <body>
     <div class="container" style="max-width: 900px;">
         <div class="admin-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">👨‍🎓 بوابة الطالب الأكاديمية</div>
         
-        <!-- البطاقة الشخصية -->
-        <div class="card" style="display: flex; justify-content: space-between; align-items: center; background: rgba(99, 102, 241, 0.1);">
-            <div>
+        <!-- البطاقة الشخصية والتنقل للحضور -->
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; background: rgba(99, 102, 241, 0.1); flex-wrap: wrap; gap: 15px;">
+            <div style="text-align: right;">
                 <h3 id="studentNameDisplay" style="margin-bottom: 5px;">أهلاً بك، ...</h3>
                 <p id="studentInfoDisplay" style="margin: 0; font-size: 13px; color: var(--text-main);"></p>
             </div>
-            <button class="btn" style="width: auto; padding: 10px 20px;" onclick="window.location.href='subjects.html'">📍 تسجيل الحضور (GPS)</button>
+            <button class="btn" style="width: auto; padding: 10px 20px; background: #10b981;" onclick="window.location.href='subjects.html'">📍 تسجيل الحضور (GPS)</button>
         </div>
 
         <div class="grid-dashboard">
@@ -30,7 +24,7 @@
             <div class="card">
                 <h3>📚 المقررات والكتب الدراسية</h3>
                 <div id="booksContainer">
-                    <p style="font-size: 13px;">جاري التحميل...</p>
+                    <p style="font-size: 13px; color: var(--text-sub);">جاري التحميل...</p>
                 </div>
             </div>
 
@@ -38,7 +32,7 @@
             <div class="card">
                 <h3>📅 الجداول والدرجات</h3>
                 <div id="schedulesContainer">
-                    <p style="font-size: 13px;">جاري التحميل...</p>
+                    <p style="font-size: 13px; color: var(--text-sub);">جاري التحميل...</p>
                 </div>
             </div>
 
@@ -46,7 +40,7 @@
             <div class="card">
                 <h3>💬 منتدى نقاش الدفعة</h3>
                 <div class="forum-box" id="chatBox">
-                    <p style="font-size: 12px; color: #888;">جاري تحميل الرسائل...</p>
+                    <p style="font-size: 12px; color: var(--text-sub);">جاري تحميل الرسائل...</p>
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="chatMessage" placeholder="اكتب استفسارك هنا..." style="flex: 3; padding: 8px;">
@@ -78,25 +72,22 @@
 
         async function loadStudentDashboard() {
             try {
-                // جلب المحتوى من السحابة بناءً على فرقة الطالب
                 const res = await fetch(`${googleScriptUrl}?action=getDashboardData&grade=${currentUser.grade}`);
                 const data = await res.json();
                 
-                // عرض الكتب
-                const booksHtml = data.books.map(b => `<a href="${b.link}" target="_blank" style="display:block; color:#10b981; margin-bottom:5px; text-decoration:none;">📄 ${b.title}</a>`).join('') || "لا توجد كتب متاحة حالياً.";
+                const booksHtml = data.books.map(b => `<a href="${b.link}" target="_blank" style="display:block; color:#10b981; margin-bottom:8px; text-decoration:none; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 6px;">📄 ${b.title}</a>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد كتب متاحة حالياً.</p>";
                 document.getElementById('booksContainer').innerHTML = booksHtml;
 
-                // عرض الجداول
-                const schedulesHtml = data.schedules.map(s => `<a href="${s.link}" target="_blank" style="display:block; color:#38bdf8; margin-bottom:5px; text-decoration:none;">🗓️ ${s.title}</a>`).join('') || "لا توجد جداول متاحة حالياً.";
+                const schedulesHtml = data.schedules.map(s => `<a href="${s.link}" target="_blank" style="display:block; color:#38bdf8; margin-bottom:8px; text-decoration:none; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 6px;">🗓️ ${s.title}</a>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد جداول متاحة حالياً.</p>";
                 document.getElementById('schedulesContainer').innerHTML = schedulesHtml;
 
-                // عرض الشات
-                const chatHtml = data.chat.map(c => `<div class="msg"><span>${c.name}:</span> ${c.message}</div>`).join('') || "لا توجد رسائل سابقة.";
+                const chatHtml = data.chat.map(c => `<div class="msg"><span>${c.name}:</span> ${c.message}</div>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد رسائل سابقة.</p>";
                 document.getElementById('chatBox').innerHTML = chatHtml;
                 document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
 
             } catch (e) {
                 console.error("Error loading dashboard", e);
+                document.getElementById('booksContainer').innerHTML = "<p style='color: var(--accent-red);'>تعذر الاتصال بالسحابة.</p>";
             }
         }
 
@@ -106,12 +97,13 @@
             
             document.getElementById('chatMessage').value = '';
             document.getElementById('chatBox').innerHTML += `<div class="msg"><span>${currentUser.name}:</span> ${msg} (جاري الإرسال...)</div>`;
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
             
             await fetch(googleScriptUrl, {
                 method: 'POST',
                 body: JSON.stringify({ action: "sendChat", name: currentUser.name, grade: currentUser.grade, message: msg })
             });
-            loadStudentDashboard(); // تحديث الشات
+            loadStudentDashboard();
         }
 
         async function submitComplaint() {
