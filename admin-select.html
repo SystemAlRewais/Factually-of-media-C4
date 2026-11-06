@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول الإدارة</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 400px; text-align: center;">
+        <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--accent-red);">🔐 البوابة المركزية للإدارة</div>
+        <h2>تسجيل دخول المشرف</h2>
+        
+        <div class="input-group">
+            <label>كود الإدارة:</label>
+            <input type="text" id="adminCode" placeholder="أدخل كود الإدارة">
+        </div>
+        <div class="input-group">
+            <label>كلمة المرور:</label>
+            <input type="password" id="adminPass" placeholder="••••••••">
+        </div>
+        <button class="btn" onclick="verifyAdmin()" style="background: #ef4444;">دخول لوحة التحكم</button>
+
+        <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top: 15px;">العودة للرئيسية</button>
+    </div>
+
+    <script>
+        function verifyAdmin() {
+            const code = document.getElementById('adminCode').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+
+            // البيانات السرية محمية بالكامل داخل الكود البرمجي هنا وليست معروضة للطلاب
+            if (code === "admin" && pass === "44554455") {
+                // بعد نجاح الدخول، نطلب اختيار الفرقة المراد إدارتها
+                document.body.innerHTML = `
+                    <div class="container" style="max-width: 500px; text-align: center;">
+                        <h2 style="color: #38bdf8;">اختر الفرقة الدراسية للإدارة</h2>
+                        <p style="color: #9ca3af; margin-bottom: 20px;">لكل فرقة كتبها، جداولها، وشكاويها المستقلة تماماً.</p>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <button class="btn" onclick="selectGrade('الفرقة الأولى')" style="background: #4f46e5;">إدارة الفرقة الأولى</button>
+                            <button class="btn" onclick="selectGrade('الفرقة الثانية')" style="background: #4f46e5;">إدارة الفرقة الثانية</button>
+                            <button class="btn" onclick="selectGrade('الفرقة الثالثة')" style="background: #4f46e5;">إدارة الفرقة الثالثة</button>
+                            <button class="btn" onclick="selectGrade('الفرقة الرابعة')" style="background: #4f46e5;">إدارة الفرقة الرابعة</button>
+                        </div>
+                    </div>`;
+            } else {
+                alert("❌ بيانات الإدارة غير صحيحة!");
+            }
+        }
+
+        function selectGrade(grade) {
+            localStorage.setItem('adminSelectedGrade', grade);
+            window.location.href = 'admin.html';
+        }
+    </script>
+</body>
+</html>
