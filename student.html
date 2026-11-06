@@ -30,20 +30,12 @@
             <div class="info-card"><span>السنة الأكاديمية</span><h4>2026/2027</h4></div>
         </div>
 
-        <!-- زر الذهاب لنظام الحضور الجغرافي الخاص بك -->
+        <!-- زر الذهاب لتسجيل الحضور الجغرافي الـ GPS -->
         <div style="margin-bottom: 20px; text-align: center;">
-            <button class="btn" onclick="window.location.href='subjects.html'" style="background: #10b981; font-size: 1.05rem; padding: 15px;">📍 الذهاب لنظام تسجيل الحضور (GPS)</button>
+            <button class="btn" onclick="window.location.href='attendance.html'" style="background: #10b981; font-size: 1.05rem; padding: 15px;">📍 الذهاب لنظام تسجيل الحضور الجغرافي (GPS)</button>
         </div>
 
-        <!-- لوحة إعلانات الدفعة -->
-        <div class="section-box" style="border-color: #a855f7;">
-            <h3 style="color: #a855f7; font-size: 1.1rem; margin-bottom: 10px;">📢 إعلانات وتنبيهات الدفعة الهامة</h3>
-            <div id="announcementBox" style="background: rgba(168, 85, 247, 0.05); padding: 12px; border-radius: 8px; font-size: 0.9rem; color: #fff;">
-                جاري التحقق من الإعلانات...
-            </div>
-        </div>
-
-        <!-- المقررات والكتب الخاصة بفرقة الطالب فقط -->
+        <!-- المقررات والكتب -->
         <div class="section-box">
             <h3 style="color: #f59e0b; font-size: 1.1rem; margin-bottom: 12px;">📚 المقررات والكتب الدراسية</h3>
             <div id="studentBooks"><p style="color: var(--text-sub); font-size: 0.9rem;">جاري التحميل...</p></div>
@@ -94,16 +86,14 @@
 
                 document.getElementById('studentExams').innerHTML = data.exams.map(e => `<div style="padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;"><span>📝 ${e.title}</span><a href="${e.link}" target="_blank" style="color:#10b981; text-decoration:underline; font-size:0.85rem;">عرض الجدول</a></div>`).join('') || "لا يوجد جدول امتحانات مضاف بعد.";
 
-                document.getElementById('announcementBox').innerHTML = data.announcements.length > 0 ? data.announcements[data.announcements.length - 1].message : "لا توجد إعلانات جديدة حالياً.";
-
             } catch(e) {}
         }
 
         async function sendComplaint() {
-            let txt = document.getElementById('studentComplaint'].value.trim();
+            let txt = document.getElementById('studentComplaint').value.trim();
             if(!txt) return;
             alert("تم إرسال شكواك للإدارة بنجاح.");
-            document.getElementById('studentComplaint'].value = '';
+            document.getElementById('studentComplaint').value = '';
             await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "sendComplaint", grade: currentUser.grade, id: currentUser.id, name: currentUser.name, text: txt }) }).catch(()=>{});
         }
 
