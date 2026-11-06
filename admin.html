@@ -1,61 +1,78 @@
-function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet();
-  const data = JSON.parse(e.postData.contents);
-  const action = data.action;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم والإدارة - كلية الإعلام</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 600px; text-align: right;">
+        <div class="admin-badge" id="gradeTitle">لوحة التحكم</div>
+        <h2 style="font-size: 1.2rem; margin-bottom: 15px;">إدارة شؤون ومحتوى الفرقة</h2>
 
-  // إنشاء طالب جديد وربطه بالفرقة سحابياً
-  if (action === "registerStudent") {
-    let s = sheet.getSheetByName('الطلاب') || sheet.insertSheet('الطلاب');
-    s.appendRow([data.id, data.name, data.phone, data.grade, data.password]);
-    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
-  }
+        <!-- قسم إنشاء وتوليد حساب طالب جديد (جوه الإدارة زي ما طلبت) -->
+        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="color: #10b981; font-size: 1rem; margin-bottom: 10px;">➕ إنشاء حساب وتوليد كود لطالب جديد</h3>
+            <div class="input-group" style="margin-bottom: 8px;">
+                <input type="text" id="newStudentName" placeholder="اسم الطالب الثلاثي" style="width:100%; padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
+            </div>
+            <div class="input-group" style="margin-bottom: 8px;">
+                <input type="text" id="newStudentPhone" placeholder="رقم الهاتف" style="width:100%; padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
+            </div>
+            <div class="input-group" style="margin-bottom: 10px;">
+                <input type="password" id="newStudentPass" placeholder="كلمة المرور" style="width:100%; padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
+            </div>
+            <button class="btn" onclick="addNewStudentFromAdmin()" style="background: #10b981; padding: 8px;">توليد كود وحفظ سحابياً</button>
+            <p id="adminRegStatus" style="font-size: 0.8rem; margin-top: 5px;"></p>
+        </div>
 
-  if (action === "manageStudent") {
-    let s = sheet.getSheetByName('الطلاب');
-    if(s && data.type === 'delete') {
-      let rows = s.getDataRange().getValues();
-      for(let i=rows.length-1; i>=1; i--) {
-        if(String(rows[i][0]) === String(data.id)) { s.deleteRow(i+1); break; }
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
-  }
-  
-  // باقي الأكواد الخاصة بك (المحتوى، الحضور، الإعلانات...)
-}
+        <hr style="border: 0.5px solid var(--border-color); margin-bottom: 20px;">
 
-function doGet(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet();
-  const action = e.parameter.action;
+        <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'">العودة لاختيار الفرق</button>
+    </div>
 
-  if (action === "loginStudent") {
-    let id = e.parameter.id;
-    let pass = e.parameter.pass;
-    let s = sheet.getSheetByName('الطلاب');
-    if(!s) return ContentService.createTextOutput(JSON.stringify({success: false})).setMimeType(ContentService.MimeType.JSON);
-    
-    let rows = s.getDataRange().getValues();
-    for(let i=1; i<rows.length; i++) {
-      if(String(rows[i][0]).trim() === String(id).trim() && String(rows[i][4]).trim() === String(pass).trim()) {
-        return ContentService.createTextOutput(JSON.stringify({
-          success: true,
-          student: { id: rows[i][0], name: rows[i][1], phone: rows[i][2], grade: rows[i][3] }
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({success: false})).setMimeType(ContentService.MimeType.JSON);
-  }
+    <script src="script.js"></script>
+    <script>
+        const currentGrade = localStorage.getItem('adminGrade') || 'الفرقة الأولى';
+        document.getElementById('gradeTitle').textContent = "إدارة: " + currentGrade;
 
-  if (action === "getAllStudents") {
-    let grade = e.parameter.grade;
-    let s = sheet.getSheetByName('الطلاب');
-    let res = [];
-    if(s) {
-      let rows = s.getDataRange().getValues();
-      for(let i=1; i<rows.length; i++) {
-        if(rows[i][3] === grade) res.push({id: rows[i][0], name: rows[i][1], phone: rows[i][2]});
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify(res)).setMimeType(ContentService.MimeType.JSON);
-  }
-}
+        async function addNewStudentFromAdmin() {
+            let name = document.getElementById('newStudentName').value.trim();
+            let phone = document.getElementById('newStudentPhone').value.trim();
+            let pass = document.getElementById('newStudentPass').value.trim();
+            let statusEl = document.getElementById('adminRegStatus');
+
+            if(!name || !phone || !pass) { alert("يرجى إدخال كافة بيانات الطالب!"); return; }
+
+            let randomId = 'AZ' + Math.floor(100000 + Math.random() * 900000);
+            statusEl.style.color = "#38bdf8";
+            statusEl.textContent = "⏳ جاري توليد الكود والحفظ...";
+
+            try {
+                await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "registerStudent",
+                        id: randomId,
+                        name: name,
+                        phone: phone,
+                        grade: currentGrade,
+                        password: pass
+                    })
+                });
+
+                statusEl.style.color = "#10b981";
+                statusEl.textContent = `✅ تم بنجاح! كود الطالب: ${randomId}`;
+                alert(`🎉 تم إنشاء الحساب بنجاح للفرقة (${currentGrade})!\nكود الطالب: ${randomId}`);
+                document.getElementById('newStudentName').value = '';
+                document.getElementById('newStudentPhone').value = '';
+                document.getElementById('newStudentPass').value = '';
+            } catch(e) {
+                statusEl.style.color = "red";
+                statusEl.textContent = "❌ خطأ في الاتصال بالسحابة.";
+            }
+        }
+    </script>
+</body>
+</html>
