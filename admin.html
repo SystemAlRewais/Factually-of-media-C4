@@ -1,261 +1,61 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الإدارية الشاملة</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container" style="max-width: 1000px; text-align: right;">
-        <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--accent-red);">🔐 لوحة التحكم المركزية</div>
-        <h2 id="adminTitleHeader">إدارة الفرقة: ...</h2>
-        <p style="color: var(--text-sub);">تحكم كامل سحابياً (إضافة، تعديل، حذف المقررات والجداول، GPS، حضور حي، وأرشيف).</p>
+function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const data = JSON.parse(e.postData.contents);
+  const action = data.action;
 
-        <!-- 1. إعدادات الـ GPS -->
-        <div class="card" style="border-color: #38bdf8;">
-            <h3 style="color: #38bdf8;">📍 إعدادات المحاضرة والحضور الجغرافي (GPS)</h3>
-            <div class="input-group">
-                <label>اسم المادة الدراسية:</label>
-                <input type="text" id="activeSubjectName" placeholder="مثال: الصحافة المتخصصة">
-            </div>
-            <div class="input-group">
-                <label>رابط موقع الكلية من Google Maps:</label>
-                <input type="text" id="mapLinkInput" placeholder="https://maps.app.goo.gl/...">
-            </div>
-            <div class="input-group">
-                <label>النطاق الجغرافي المسموح للتسجيل (بالمتر):</label>
-                <input type="number" id="gpsRange" placeholder="مثال: 2000">
-            </div>
-            <button class="btn" onclick="saveLectureSettings()" style="background: #38bdf8; margin-bottom: 12px;">💾 حفظ إعدادات المحاضرة والموقع سحابياً</button>
-            
-            <div style="border-top: 1px solid var(--border-color); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                <span id="attStatusText" style="font-weight: bold; color: var(--accent-red);">حالة التسجيل: مغلق 🔒</span>
-                <button id="toggleAttBtn" class="btn" onclick="toggleAttendance()" style="background: var(--accent-green); width: auto; padding: 10px 25px;">🟢 فتح التسجيل للمادة</button>
-            </div>
-        </div>
+  // إنشاء طالب جديد وربطه بالفرقة سحابياً
+  if (action === "registerStudent") {
+    let s = sheet.getSheetByName('الطلاب') || sheet.insertSheet('الطلاب');
+    s.appendRow([data.id, data.name, data.phone, data.grade, data.password]);
+    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
+  }
 
-        <!-- 2. إدارة المقررات والكتب (إضافة، تعديل، حذف) -->
-        <div class="card">
-            <h3 style="color: #f59e0b;">📚 إدارة المقررات والكتب الدراسية</h3>
-            <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="text" id="bookTitle" placeholder="اسم الكتاب">
-                <input type="text" id="bookLink" placeholder="رابط التحميل">
-                <button class="btn" onclick="addOrUpdateContent('book')" id="bookBtn" style="background: #f59e0b; margin-top:0;">إضافة كتاب</button>
-            </div>
-            <div id="booksListContainer" style="max-height: 180px; overflow-y: auto;">جاري التحميل...</div>
-        </div>
+  if (action === "manageStudent") {
+    let s = sheet.getSheetByName('الطلاب');
+    if(s && data.type === 'delete') {
+      let rows = s.getDataRange().getValues();
+      for(let i=rows.length-1; i>=1; i--) {
+        if(String(rows[i][0]) === String(data.id)) { s.deleteRow(i+1); break; }
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  // باقي الأكواد الخاصة بك (المحتوى، الحضور، الإعلانات...)
+}
 
-        <!-- 3. إدارة جداول المحاضرات (إضافة، تعديل، حذف) -->
-        <div class="card">
-            <h3 style="color: #38bdf8;">📅 إدارة جداول المحاضرات</h3>
-            <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="text" id="schTitle" placeholder="عنوان الجدول">
-                <input type="text" id="schLink" placeholder="رابط الجدول">
-                <button class="btn" onclick="addOrUpdateContent('schedule')" id="schBtn" style="background: #38bdf8; margin-top:0;">إضافة جدول</button>
-            </div>
-            <div id="schedulesListContainer" style="max-height: 180px; overflow-y: auto;">جاري التحميل...</div>
-        </div>
+function doGet(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const action = e.parameter.action;
 
-        <!-- 4. إدارة جداول الاختبارات (إضافة، تعديل، حذف) -->
-        <div class="card">
-            <h3 style="color: #10b981;">📝 إدارة جداول الاختبارات والامتحانات</h3>
-            <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 10px; margin-bottom: 10px;">
-                <input type="text" id="examTitle" placeholder="عنوان الجدول">
-                <input type="text" id="examLink" placeholder="رابط الجدول">
-                <button class="btn" onclick="addOrUpdateContent('exam')" id="examBtn" style="background: #10b981; margin-top:0;">إضافة اختبار</button>
-            </div>
-            <div id="examsListContainer" style="max-height: 180px; overflow-y: auto;">جاري التحميل...</div>
-        </div>
+  if (action === "loginStudent") {
+    let id = e.parameter.id;
+    let pass = e.parameter.pass;
+    let s = sheet.getSheetByName('الطلاب');
+    if(!s) return ContentService.createTextOutput(JSON.stringify({success: false})).setMimeType(ContentService.MimeType.JSON);
+    
+    let rows = s.getDataRange().getValues();
+    for(let i=1; i<rows.length; i++) {
+      if(String(rows[i][0]).trim() === String(id).trim() && String(rows[i][4]).trim() === String(pass).trim()) {
+        return ContentService.createTextOutput(JSON.stringify({
+          success: true,
+          student: { id: rows[i][0], name: rows[i][1], phone: rows[i][2], grade: rows[i][3] }
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({success: false})).setMimeType(ContentService.MimeType.JSON);
+  }
 
-        <!-- 5. السجل الحي وأرشفة المحاضرة -->
-        <div class="card">
-            <h3 style="color: #10b981;">📊 السجل الحي للحضور</h3>
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                <button class="btn btn-secondary" onclick="loadLiveAttendance()" style="flex:1; margin-top:0;">🔄 تحديث السجل</button>
-                <button class="btn" onclick="endAndArchiveLecture()" style="background: var(--accent-red); flex:1; margin-top:0;">🛑 إنهاء المحاضرة وأرشفة الكشف</button>
-            </div>
-            <div id="liveAttendanceContainer" style="overflow-x: auto; max-height: 200px;"><p style="color: var(--text-sub);">لا توجد تسجيلات حالياً.</p></div>
-        </div>
-
-        <!-- 6. إدارة الطلاب -->
-        <div class="card">
-            <h3 style="color: #a855f7;">📋 إدارة شؤون الطلاب</h3>
-            <button class="btn btn-secondary" onclick="loadStudentsManagement()" style="margin-bottom: 10px; width: auto; padding: 8px 15px;">🔄 تحديث الطلاب</button>
-            <div id="studentsManagementContainer" style="overflow-x: auto; max-height: 250px;"><p style="color: var(--text-sub);">جاري التحميل...</p></div>
-        </div>
-
-        <!-- 7. إرسال إعلان -->
-        <div class="card">
-            <h3 style="color: #f59e0b;">📢 إرسال إعلان أو تنبيه للدفعة</h3>
-            <textarea id="adminAnnouncement" placeholder="اكتب التنبيه أو لينك الجروب هنا..." rows="2" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color); margin-bottom:10px;"></textarea>
-            <button class="btn" onclick="sendAnnouncement()" style="background: #f59e0b;">نشر التنبيه للطلاب</button>
-        </div>
-
-        <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="margin-top: 15px;">⬅️ العودة لاختيار فرقة أخرى</button>
-    </div>
-
-    <script src="script.js"></script>
-    <script>
-        const currentGrade = localStorage.getItem('adminSelectedGrade') || "الفرقة الأولى";
-        document.getElementById('adminTitleHeader').textContent = `إدارة الفرقة: ${currentGrade}`;
-        let isOpenState = false;
-        let editingOriginalTitle = { book: null, schedule: null, exam: null };
-
-        async function saveLectureSettings() {
-            let subject = document.getElementById('activeSubjectName').value.trim();
-            let mapLink = document.getElementById('mapLinkInput').value.trim();
-            let range = document.getElementById('gpsRange').value.trim();
-            if(!subject || !mapLink) { alert("أدخل اسم المادة ورابط الخريطة!"); return; }
-
-            await fetch(googleScriptUrl, {
-                method: 'POST',
-                body: JSON.stringify({ action: "saveLectureSettings", grade: currentGrade, subject, mapLink, range: range || 2000 })
-            });
-            alert("📍 تم حفظ الإعدادات بنجاح!");
-        }
-
-        async function toggleAttendance() {
-            isOpenState = !isOpenState;
-            document.getElementById('attStatusText').textContent = isOpenState ? "حالة التسجيل: مفتوح ✅" : "حالة التسجيل: مغلق 🔒";
-            document.getElementById('toggleAttBtn').style.background = isOpenState ? "var(--accent-red)" : "var(--accent-green)";
-            document.getElementById('toggleAttBtn').textContent = isOpenState ? "🔴 إغلاق التسجيل" : "🟢 فتح التسجيل للمادة";
-
-            let subject = document.getElementById('activeSubjectName').value.trim() || "مادة عامة";
-            await fetch(googleScriptUrl, {
-                method: 'POST',
-                body: JSON.stringify({ action: "toggleAttendance", grade: currentGrade, subject, isOpen: isOpenState })
-            });
-        }
-
-        // دالة إضافة أو تعديل محتوى (كتاب، جدول محاضرات، جدول اختبارات)
-        async function addOrUpdateContent(type) {
-            let tId = type === 'book' ? 'bookTitle' : (type === 'schedule' ? 'schTitle' : 'examTitle');
-            let lId = type === 'book' ? 'bookLink' : (type === 'schedule' ? 'schLink' : 'examLink');
-            let title = document.getElementById(tId).value.trim();
-            let link = document.getElementById(lId).value.trim();
-            if(!title || !link) { alert("أكمل البيانات"); return; }
-
-            let originalTitle = editingOriginalTitle[type];
-            let actionName = originalTitle ? "updateGradeContent" : "addGradeContent";
-
-            await fetch(googleScriptUrl, {
-                method: 'POST',
-                body: JSON.stringify({ action: actionName, grade: currentGrade, type, title, link, originalTitle })
-            });
-
-            alert(originalTitle ? "✏️ تم تعديل البيانات بنجاح!" : "✅ تمت الإضافة بنجاح!");
-            
-            document.getElementById(tId).value = '';
-            document.getElementById(lId).value = '';
-            editingOriginalTitle[type] = null;
-            document.getElementById(type === 'book' ? 'bookBtn' : (type === 'schedule' ? 'schBtn' : 'examBtn')).textContent = type === 'book' ? "إضافة كتاب" : (type === 'schedule' ? "إضافة جدول" : "إضافة اختبار");
-            
-            loadContentList();
-        }
-
-        async function loadContentList() {
-            try {
-                const res = await fetch(`${googleScriptUrl}?action=getGradeData&grade=${currentGrade}`);
-                const data = await res.json();
-                
-                document.getElementById('booksListContainer').innerHTML = data.books.map(b => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #222;">
-                        <span>📖 ${b.title}</span>
-                        <div>
-                            <button onclick="prepareEdit('book', '${b.title}', '${b.link}')" style="background:#38bdf8; color:#fff; border:none; padding:3px 8px; border-radius:4px; margin-left:5px;">تعديل</button>
-                            <button onclick="deleteContent('book', '${b.title}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button>
-                        </div>
-                    </div>`).join('') || "لا توجد كتب مضافة.";
-
-                document.getElementById('schedulesListContainer').innerHTML = data.schedules.map(s => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #222;">
-                        <span>🗓️ ${s.title}</span>
-                        <div>
-                            <button onclick="prepareEdit('schedule', '${s.title}', '${s.link}')" style="background:#38bdf8; color:#fff; border:none; padding:3px 8px; border-radius:4px; margin-left:5px;">تعديل</button>
-                            <button onclick="deleteContent('schedule', '${s.title}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button>
-                        </div>
-                    </div>`).join('') || "لا توجد جداول مضافة.";
-
-                document.getElementById('examsListContainer').innerHTML = data.exams.map(e => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid #222;">
-                        <span>📝 ${e.title}</span>
-                        <div>
-                            <button onclick="prepareEdit('exam', '${e.title}', '${e.link}')" style="background:#38bdf8; color:#fff; border:none; padding:3px 8px; border-radius:4px; margin-left:5px;">تعديل</button>
-                            <button onclick="deleteContent('exam', '${e.title}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button>
-                        </div>
-                    </div>`).join('') || "لا توجد اختبارات مضافة.";
-            } catch(e) {}
-        }
-        loadContentList();
-
-        function prepareEdit(type, title, link) {
-            let tId = type === 'book' ? 'bookTitle' : (type === 'schedule' ? 'schTitle' : 'examTitle');
-            let lId = type === 'book' ? 'bookLink' : (type === 'schedule' ? 'schLink' : 'examLink');
-            document.getElementById(tId).value = title;
-            document.getElementById(lId).value = link;
-            editingOriginalTitle[type] = title;
-            document.getElementById(type === 'book' ? 'bookBtn' : (type === 'schedule' ? 'schBtn' : 'examBtn')).textContent = "حفظ التعديل";
-            window.scrollTo({ top: 300, behavior: 'smooth' });
-        }
-
-        async function deleteContent(type, title) {
-            if(confirm(`هل أنت متأكد من حذف "${title}"؟`)) {
-                await fetch(googleScriptUrl, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: "deleteGradeContent", grade: currentGrade, type, title })
-                });
-                loadContentList();
-            }
-        }
-
-        async function loadLiveAttendance() {
-            try {
-                const res = await fetch(`${googleScriptUrl}?action=getLiveAttendance&grade=${currentGrade}`);
-                const data = await res.json();
-                const container = document.getElementById('liveAttendanceContainer');
-                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد تسجيلات حضور حالياً.</p>"; return; }
-                container.innerHTML = `<table><tr><th>الاسم</th><th>الكود</th><th>المادة</th><th>الوقت</th></tr>` + 
-                    data.map(r => `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.subject}</td><td>${r.time}</td></tr>`).join('') + `</table>`;
-            } catch(e) {}
-        }
-        loadLiveAttendance();
-
-        async function endAndArchiveLecture() {
-            if(confirm("إنهاء المحاضرة وترحيل الكشف للأرشيف؟")) {
-                let subject = document.getElementById('activeSubjectName').value.trim() || "محاضرة";
-                await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "archiveLecture", grade: currentGrade, subject }) });
-                alert("📊 تم أرشفة الحضور بنجاح!");
-                loadLiveAttendance();
-            }
-        }
-
-        async function loadStudentsManagement() {
-            try {
-                const res = await fetch(`${googleScriptUrl}?action=getAllStudents&grade=${currentGrade}`);
-                const data = await res.json();
-                const container = document.getElementById('studentsManagementContainer');
-                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد طلاب.</p>"; return; }
-                container.innerHTML = `<table><tr><th>الكود</th><th>الاسم</th><th>الهاتف</th><th>إجراء</th></tr>` +
-                    data.map(st => `<tr><td>${st.id}</td><td>${st.name}</td><td>${st.phone}</td><td><button onclick="deleteStudent('${st.id}')" style="background:red; color:#fff; border:none; padding:3px 8px; border-radius:4px;">حذف</button></td></tr>`).join('') + `</table>`;
-            } catch(e) {}
-        }
-        loadStudentsManagement();
-
-        async function deleteStudent(id) {
-            if(confirm("حذف الطالب نهائياً؟")) {
-                await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "manageStudent", id, type: 'delete' }) });
-                loadStudentsManagement();
-            }
-        }
-
-        async function sendAnnouncement() {
-            let msg = document.getElementById('adminAnnouncement').value.trim();
-            if(!msg) return;
-            await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "sendAnnouncement", grade: currentGrade, message: msg }) });
-            alert("📢 تم نشر التنبيه بنجاح!");
-            document.getElementById('adminAnnouncement').value = '';
-        }
-    </script>
-</body>
-</html>
+  if (action === "getAllStudents") {
+    let grade = e.parameter.grade;
+    let s = sheet.getSheetByName('الطلاب');
+    let res = [];
+    if(s) {
+      let rows = s.getDataRange().getValues();
+      for(let i=1; i<rows.length; i++) {
+        if(rows[i][3] === grade) res.push({id: rows[i][0], name: rows[i][1], phone: rows[i][2]});
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify(res)).setMimeType(ContentService.MimeType.JSON);
+  }
+}
