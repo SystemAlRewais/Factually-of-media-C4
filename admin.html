@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- شاشة تسجيل دخول الإدارة بحماية الباسورد -->
+    <!-- 1. شاشة تسجيل دخول الإدارة بالحماية -->
     <div id="adminLoginModal" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(3,7,18,0.95); z-index:1000; justify-content:center; align-items:center;">
         <div class="container" style="max-width:400px; text-align:right;">
             <div class="admin-badge">حماية الإدارة العليا</div>
@@ -27,7 +27,7 @@
     </div>
 
     <!-- لوحة الإدارة الرئيسية -->
-    <div id="adminDashboard" style="display:none; max-width: 800px; margin: 20px auto; padding: 20px;" class="container">
+    <div id="adminDashboard" style="display:none; max-width: 850px; margin: 20px auto; padding: 20px;" class="container">
         <div style="display: flex; justify-content: space-between; align-items:center; margin-bottom: 20px;">
             <div>
                 <div class="admin-badge" id="gradeTitle">لوحة التحكم</div>
@@ -36,9 +36,9 @@
             <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="width: auto; padding: 8px 15px;">خروج لاختيار الفرقة</button>
         </div>
 
-        <!-- قسم إنشاء وتوليد حساب طالب جديد (جوا الإدارة وبيروح شيت الطلاب مباشرة) -->
-        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-            <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 12px;">➕ إنشاء حساب وتوليد كود لطالب جديد</h3>
+        <!-- 2. قسم إنشاء وتوليد حساب طالب جديد -->
+        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 12px;">➕ 1. إنشاء حساب وتوليد كود لطالب جديد</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <input type="text" id="regName" placeholder="اسم الطالب الثلاثي" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
                 <input type="text" id="regPhone" placeholder="رقم الهاتف" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
@@ -50,9 +50,33 @@
             <p id="regStatus" style="font-size: 0.85rem; text-align: center;"></p>
         </div>
 
-        <!-- قسم التحكم في المحاضرة والحضور الحي -->
-        <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid #38bdf8; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-            <h3 style="color: #38bdf8; font-size: 1.1rem; margin-bottom: 12px;">📡 إدارة المحاضرة والحضور الجغرافي</h3>
+        <!-- 3. قسم إدارة المحتوى (كتب، جداول) -->
+        <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid #38bdf8; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="color: #38bdf8; font-size: 1.1rem; margin-bottom: 12px;">📚 2. إدارة المحتوى (كتب / جداول / امتحانات)</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <select id="contentType" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                    <option value="book">كتاب دراسي</option>
+                    <option value="schedule">جدول المحاضرات</option>
+                    <option value="exam">جدول الامتحانات</option>
+                </select>
+                <input type="text" id="contentTitle" placeholder="عنوان العنصر" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                <input type="text" id="contentLink" placeholder="رابط الملف (Drive / PDF)" style="padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+            </div>
+            <button class="btn" onclick="addContent()" style="background: #38bdf8; color:#030712; font-weight:bold;">إضافة المحتوى سحابياً</button>
+            <p id="contentStatus" style="font-size: 0.85rem; text-align: center; margin-top:5px;"></p>
+        </div>
+
+        <!-- 4. قسم الإعلانات والتنبيهات -->
+        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid #f59e0b; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="color: #f59e0b; font-size: 1.1rem; margin-bottom: 12px;">📢 3. إرسال إعلان للفرقة</h3>
+            <textarea id="announcementText" placeholder="اكتب نص الإعلان هنا..." style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color); margin-bottom:10px; height:60px;"></textarea>
+            <button class="btn" onclick="sendAnnouncement()" style="background: #f59e0b; color:#030712; font-weight:bold;">نشر الإعلان سحابياً</button>
+            <p id="announcementStatus" style="font-size: 0.85rem; text-align: center; margin-top:5px;"></p>
+        </div>
+
+        <!-- 5 & 6. إدارة المحاضرة والحضور الجغرافي والأرشيف -->
+        <div style="background: rgba(168, 85, 247, 0.05); border: 1px solid #a855f7; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="color: #a855f7; font-size: 1.1rem; margin-bottom: 12px;">📡 4. إدارة المحاضرة والحضور والـ GPS</h3>
             <div class="input-group" style="margin-bottom:10px;">
                 <input type="text" id="lectureSubject" placeholder="اسم المحاضرة / المادة" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
             </div>
@@ -62,12 +86,12 @@
             </div>
         </div>
 
-        <!-- جدول الحضور الحي المحدث سحابياً -->
+        <!-- جدول الحضور الحي لحظياً -->
         <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px;">
             <h3 style="font-size: 1.1rem; margin-bottom: 12px;">📋 كشف الحضور الحي لحظياً</h3>
             <button class="btn btn-secondary" onclick="loadLiveAttendance()" style="margin-bottom: 10px; width:auto; padding:6px 12px;">تحديث الكشف</button>
             <div style="overflow-x: auto;">
-                <table style="width:150%; text-align:right; font-size:0.85rem; border-collapse: collapse;">
+                <table style="width:100%; text-align:right; font-size:0.85rem; border-collapse: collapse;">
                     <thead>
                         <tr style="border-bottom:1px solid var(--border-color); color:var(--text-sub);">
                             <th style="padding:8px;">الوقت</th>
@@ -111,7 +135,7 @@
 
             let randomId = 'AZ' + Math.floor(100000 + Math.random() * 900000);
             statusEl.style.color = "#38bdf8";
-            statusEl.textContent = "⏳ جاري توليد الكود وحفظه سحابياً في شيت الطلاب...";
+            statusEl.textContent = "⏳ جاري توليد الكود وحفظه سحابياً...";
 
             try {
                 let res = await fetch(googleScriptUrl, {
@@ -133,12 +157,68 @@
                     document.getElementById('regName').value = '';
                     document.getElementById('regPhone').value = '';
                     document.getElementById('regPass').value = '';
-                } else {
-                    throw new Error();
-                }
+                } else { throw new Error(); }
             } catch(e) {
                 statusEl.style.color = "red";
                 statusEl.textContent = "❌ حدث خطأ أثناء الحفظ بالسحابة.";
+            }
+        }
+
+        async function addContent() {
+            let type = document.getElementById('contentType').value;
+            let title = document.getElementById('contentTitle').value.trim();
+            let link = document.getElementById('contentLink').value.trim();
+            let statusEl = document.getElementById('contentStatus');
+
+            if(!title || !link) { alert("يرجى إدخال العنوان والرابط!"); return; }
+
+            statusEl.style.color = "#38bdf8";
+            statusEl.textContent = "⏳ جاري الإضافة سحابياً...";
+
+            try {
+                await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "addGradeContent",
+                        grade: currentGrade,
+                        type: type,
+                        title: title,
+                        link: link
+                    })
+                });
+                statusEl.style.color = "#10b981";
+                statusEl.textContent = "✅ تمت إضافة المحتوى بنجاح!";
+                document.getElementById('contentTitle').value = '';
+                document.getElementById('contentLink').value = '';
+            } catch(e) {
+                statusEl.style.color = "red";
+                statusEl.textContent = "❌ خطأ في الإضافة.";
+            }
+        }
+
+        async function sendAnnouncement() {
+            let msg = document.getElementById('announcementText').value.trim();
+            let statusEl = document.getElementById('announcementStatus');
+            if(!msg) { alert("يرجى كتابة نص الإعلان!"); return; }
+
+            statusEl.style.color = "#38bdf8";
+            statusEl.textContent = "⏳ جاري النشر...";
+
+            try {
+                await fetch(googleScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "sendAnnouncement",
+                        grade: currentGrade,
+                        message: msg
+                    })
+                });
+                statusEl.style.color = "#10b981";
+                statusEl.textContent = "✅ تم نشر الإعلان بنجاح!";
+                document.getElementById('announcementText').value = '';
+            } catch(e) {
+                statusEl.style.color = "red";
+                statusEl.textContent = "❌ خطأ في النشر.";
             }
         }
 
