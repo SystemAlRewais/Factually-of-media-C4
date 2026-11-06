@@ -1,5 +1,5 @@
-// الرابط السحابي الموحد والمربوط بقاعدة البيانات المحدثة
-const googleScriptUrl = "https://script.google.com/macros/s/AKfycby8cWdxaldOFkBqF-4G_jsS5lkIhW1AQ4TWEBZwXkmOkjVp_aM8rIVc_DJRiHgeZuUfwA/exec";
+// الرابط السحابي الجديد المعتمد للمنصة الأكاديمية
+const googleScriptUrl = "https://script.google.com/macros/s/AKfycbywc-EEG39QEV4w3sH7dEa7fAj5nSvZ5IW5nrgw3Un2Ngk-vvs55_3pXmvyJZU44Z9iIQ/exec";
 
 console.log("تم تحميل السكربت بنجاح، المنصة متصلة بالسحابة عبر الرابط: " + googleScriptUrl);
 
