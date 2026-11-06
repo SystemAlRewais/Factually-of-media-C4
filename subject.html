@@ -3,64 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختر المادة الدراسية</title>
+    <title>بوابة الطالب الأكاديمية</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container" style="max-width: 600px; text-align: center;">
-        <div class="admin-badge" style="background: rgba(56, 189, 248, 0.1); color: #38bdf8;">🎓 المواد الدراسية المتاحة</div>
-        <h2>اختر المادة لتسجيل الحضور</h2>
-        <p id="welcomeStudent" style="color: var(--text-sub); margin-bottom: 25px;"></p>
-
-        <div id="subjectsListContainer" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
-            <p style="color: var(--text-sub);">جاري تحميل المواد الدراسية...</p>
+    <div class="container" style="max-width: 900px;">
+        <div class="admin-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">👨‍🎓 المنصة التعليمية</div>
+        
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; background: rgba(99, 102, 241, 0.1); flex-wrap: wrap; gap: 15px;">
+            <div style="text-align: right;">
+                <h3 id="studentNameDisplay" style="margin-bottom: 5px;">أهلاً بك...</h3>
+                <p id="studentInfoDisplay" style="margin: 0; font-size: 13px; color: var(--text-main);"></p>
+            </div>
+            <!-- هذا الزر يحافظ على نظامك القديم -->
+            <button class="btn" style="width: auto; padding: 10px 20px; background: #10b981;" onclick="window.location.href='subjects.html'">📍 الذهاب لتسجيل الحضور (GPS)</button>
         </div>
 
-        <button class="btn btn-secondary" onclick="window.location.href='student.html'">العودة للوحة الطالب</button>
+        <div class="grid-dashboard">
+            <div class="card">
+                <h3>📚 المقررات والكتب الدراسية</h3>
+                <div id="booksContainer"><p style="font-size: 13px; color: var(--text-sub);">جاري التحميل...</p></div>
+            </div>
+
+            <div class="card">
+                <h3>📅 الجداول والنتائج</h3>
+                <div id="schedulesContainer"><p style="font-size: 13px; color: var(--text-sub);">جاري التحميل...</p></div>
+            </div>
+
+            <div class="card">
+                <h3>💬 منتدى الدفعة</h3>
+                <div class="forum-box" id="chatBox"><p style="font-size: 12px; color: var(--text-sub);">جاري تحميل الرسائل...</p></div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="chatMessage" placeholder="اكتب استفسارك هنا..." style="flex: 3; padding: 8px;">
+                    <button class="btn" onclick="sendChatMessage()" style="flex: 1; margin-top: 0;">إرسال</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>✉️ صندوق المقترحات للإدارة</h3>
+                <textarea id="complaintText" placeholder="اكتب رسالتك للإدارة..." rows="2" style="width: 100%; padding: 10px; background: #030712; border: 1px solid var(--border-color); color: #fff; border-radius: 12px; margin-bottom: 10px; resize: none;"></textarea>
+                <button class="btn" onclick="submitComplaint()" style="background: var(--accent-red);">إرسال الشكوى</button>
+            </div>
+        </div>
+        <button class="btn btn-secondary" onclick="logout()" style="margin-top: 20px;">🚪 تسجيل الخروج</button>
     </div>
 
     <script src="script.js"></script>
     <script>
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (!currentUser) {
-            window.location.href = 'index.html';
-        } else {
-            document.getElementById('welcomeStudent').textContent = `تأكيد حضورك يا ${currentUser.name}`;
-            renderSubjectsList();
+        if (!currentUser) window.location.href = 'index.html';
+        else {
+            document.getElementById('studentNameDisplay').textContent = `أهلاً بك، ${currentUser.name}`;
+            document.getElementById('studentInfoDisplay').textContent = `الرقم الجامعي: ${currentUser.id} | الفرقة: ${currentUser.grade}`;
+            loadDashboardData();
         }
 
-        function getSubjects() {
-            let subs = JSON.parse(localStorage.getItem('customSubjectsList'));
-            if (!subs || !Array.isArray(subs) || subs.length === 0) {
-                subs = [
-                    "نشأه وسائل اتصال د/مصطفي مجموعه اولي",
-                    "نشأه وسائل اتصال د/مصطفي مجموعه تانيه",
-                    "ماده القرآن الكريم"
-                ];
-                localStorage.setItem('customSubjectsList', JSON.stringify(subs));
-            }
-            return subs;
+        async function loadDashboardData() {
+            try {
+                const res = await fetch(`${googleScriptUrl}?action=getDashboardData&grade=${currentUser.grade}`);
+                const data = await res.json();
+                
+                document.getElementById('booksContainer').innerHTML = data.books.map(b => `<a href="${b.link}" target="_blank" style="display:block; color:#10b981; margin-bottom:8px; text-decoration:none;">📄 ${b.title}</a>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد كتب.</p>";
+                document.getElementById('schedulesContainer').innerHTML = data.schedules.map(s => `<a href="${s.link}" target="_blank" style="display:block; color:#38bdf8; margin-bottom:8px; text-decoration:none;">🗓️ ${s.title}</a>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد جداول.</p>";
+                document.getElementById('chatBox').innerHTML = data.chat.map(c => `<div class="msg"><span>${c.name}:</span> ${c.message}</div>`).join('') || "<p style='font-size: 13px; color: var(--text-sub);'>لا توجد رسائل.</p>";
+                document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+            } catch (e) { document.getElementById('booksContainer').innerHTML = "<p style='color: var(--accent-red);'>تعذر الاتصال بالسحابة.</p>"; }
         }
 
-        function renderSubjectsList() {
-            const container = document.getElementById('subjectsListContainer');
-            const subjects = getSubjects();
-            container.innerHTML = "";
-
-            subjects.forEach(sub => {
-                const btn = document.createElement('button');
-                btn.className = 'btn';
-                btn.style.cssText = 'background: #4f46e5; padding: 15px; font-size: 16px; border: none; cursor: pointer; border-radius: 8px; color: #fff; width: 100%; text-align: right;';
-                btn.textContent = `📚 ${sub}`;
-                btn.onclick = function() { selectSubject(sub); };
-                container.appendChild(btn);
-            });
+        async function sendChatMessage() {
+            const msg = document.getElementById('chatMessage').value.trim();
+            if(!msg) return;
+            document.getElementById('chatMessage').value = '';
+            document.getElementById('chatBox').innerHTML += `<div class="msg"><span>${currentUser.name}:</span> ${msg} (جاري الإرسال...)</div>`;
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+            await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "sendChat", name: currentUser.name, grade: currentUser.grade, message: msg }) });
+            loadDashboardData();
         }
 
-        function selectSubject(subjectName) {
-            localStorage.setItem('selectedSubject', subjectName);
-            window.location.href = 'attendance.html';
+        async function submitComplaint() {
+            const text = document.getElementById('complaintText').value.trim();
+            if(!text) return;
+            alert("تم إرسال رسالتك للإدارة بنجاح.");
+            document.getElementById('complaintText').value = '';
+            await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "sendComplaint", name: currentUser.name, id: currentUser.id, text: text }) });
         }
+
+        function logout() { localStorage.removeItem('currentUser'); window.location.href = 'index.html'; }
     </script>
 </body>
 </html>
