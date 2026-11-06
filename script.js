@@ -1,5 +1,5 @@
-// الرابط السحابي الموحد والمربوط بقاعدة بيانات جوجل شيت الجديدة
-const googleScriptUrl = "https://script.google.com/macros/s/AKfycbwJNPNwDhoSg8a47WD1UM_OgH5lNAbAW2ZBQumqxWhKYJLsFra_qXJKZpK0yrc6Jjy5gQ/exec";
+// الرابط السحابي الموحد والمربوط بقاعدة بيانات جوجل شيت المحدثة كلياً
+const googleScriptUrl = "https://script.google.com/macros/s/AKfycbwQL21gKcvm6p3qfhsslVONI_exaLoCZU7Ga7CtIy9X47qCwxvinyKmaRL_yG_flaAL4w/exec";
 
 console.log("تم تحميل السكربت بنجاح، المنصة متصلة بالسحابة عبر الرابط: " + googleScriptUrl);
 
