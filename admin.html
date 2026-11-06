@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,14 +7,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- شاشة تسجيل دخول الإدارة (باسورد 44554455 بدون أي تغشيش) -->
+    <!-- شاشة تسجيل دخول الإدارة (باسورد 44554455) -->
     <div id="adminLoginModal" style="display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(3,7,18,0.95); z-index:1000; justify-content:center; align-items:center;">
         <div class="container" style="max-width:400px; text-align:right;">
             <div class="admin-badge">تسجيل الإدارة</div>
             <h2 style="font-size:1.2rem; margin-bottom:15px;">تسجيل دخول المشرف</h2>
             <div class="input-group" style="margin-bottom:10px;">
                 <label style="font-size:0.85rem;">اسم المستخدم:</label>
-                <input type="text" id="adminUser" placeholder="اسم المستخدم" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
+                <input type="text" id="adminUser" placeholder="admin" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color);">
             </div>
             <div class="input-group" style="margin-bottom:15px;">
                 <label style="font-size:0.85rem;">كلمة المرور:</label>
@@ -34,10 +33,10 @@
                 <div class="admin-badge" id="gradeTitle">لوحة التحكم</div>
                 <h2 style="font-size: 1.4rem;">إدارة شؤون ومحتوى الفرقة</h2>
             </div>
-            <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="width: auto; padding: 8px 15px;">خروج لاختيار الفرقة</button>
+            <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="width: auto; padding: 8px 15px;">خروج</button>
         </div>
 
-        <!-- 1. إدارة شؤون الطلاب (تعديل كامل وحذف) -->
+        <!-- 1. إدارة شؤون الطلاب -->
         <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid #10b981; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
             <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 12px;">👥 إدارة طلاب الفرقة</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
@@ -47,7 +46,7 @@
             </div>
             <button class="btn" onclick="addNewStudent()" style="background: #10b981; margin-bottom:15px;">إضافة طالب جديد وتوليد كود</button>
             
-            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--text-sub);">قائمة طلاب الفرقة (تعديل البيانات أو الحذف):</h4>
+            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--text-sub);">قائمة طلاب الفرقة:</h4>
             <div style="max-height: 200px; overflow-y: auto;">
                 <table style="width:100%; text-align:right; font-size:0.8rem; border-collapse:collapse;">
                     <thead>
@@ -97,7 +96,7 @@
             <div id="examsList" style="font-size:0.85rem; color:var(--text-sub);"></div>
         </div>
 
-        <!-- 5. إدارة المحاضرة والـ GPS وكود التسجيل السري -->
+        <!-- 5. إدارة المحاضرة والـ GPS والكود السري -->
         <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
             <h3 style="color: #ef4444; font-size: 1.1rem; margin-bottom: 12px;">📡 إدارة المحاضرة ونطاق الـ GPS والكود السري</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
@@ -109,7 +108,7 @@
                 <input type="number" id="rangeMeters" placeholder="النطاق بالمتر (مثال: 50)" value="50" style="padding:8px; background:#030712; color:#fff; border-radius:6px; border:1px solid var(--border-color);">
             </div>
             <div style="display: flex; gap: 10px;">
-                <button class="btn" onclick="saveLectureSettings(true)" style="background: #10b981;">حفظ وفتح الحضور للمادة</button>
+                <button class="btn" onclick="saveLectureSettings(true)" style="background: #10b981;">فتح الحضور للمادة</button>
                 <button class="btn" onclick="saveLectureSettings(false)" style="background: #ef4444;">إغلاق المحاضرة والأرشيف</button>
             </div>
         </div>
@@ -117,7 +116,6 @@
         <!-- 6. الحضور الحي والأرشيف -->
         <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px;">
             <h3 style="font-size: 1.1rem; margin-bottom: 12px;">📋 كشف الحضور الحي وسجل الأرشيف</h3>
-            <button class="btn btn-secondary" onclick="loadAdminData()" style="margin-bottom: 10px; width:auto; padding:6px 12px;">تحديث البيانات</button>
             <div style="overflow-x: auto; margin-bottom: 15px;">
                 <table style="width:100%; text-align:right; font-size:0.85rem; border-collapse: collapse;">
                     <thead>
@@ -229,12 +227,19 @@
             let pass = document.getElementById('regPass').value.trim();
             if(!name || !phone || !pass) { alert("أدخل كافة البيانات!"); return; }
             let randomId = 'AZ' + Math.floor(100000 + Math.random() * 900000);
+            
             await fetch(googleScriptUrl, {
                 method: 'POST',
                 body: JSON.stringify({ action: "registerStudent", id: randomId, name: name, phone: phone, grade: currentGrade, password: pass })
             });
-            alert("تم إنشاء الطالب بكود: " + randomId);
+            
+            document.getElementById('regName').value = '';
+            document.getElementById('regPhone').value = '';
+            document.getElementById('regPass').value = '';
+            
+            // 🔄 تحديث تلقائي للجدول بدون رفرش
             loadAdminData();
+            alert("تم إنشاء الطالب بكود: " + randomId);
         }
 
         async function updateStudent(id) {
@@ -245,8 +250,8 @@
                 method: 'POST',
                 body: JSON.stringify({ action: "updateStudent", id: id, name: name, phone: phone, grade: currentGrade, password: pass })
             });
-            alert("تم التحديث بنجاح!");
             loadAdminData();
+            alert("تم التحديث بنجاح!");
         }
 
         async function deleteStudent(id) {
@@ -264,12 +269,18 @@
             let title = document.getElementById(titleId).value.trim();
             let link = document.getElementById(linkId).value.trim();
             if(!title || !link) { alert("أدخل العنوان والرابط!"); return; }
+            
             await fetch(googleScriptUrl, {
                 method: 'POST',
                 body: JSON.stringify({ action: "addGradeContent", grade: currentGrade, type: type, title: title, link: link })
             });
-            alert("تمت الإضافة بنجاح!");
+            
+            document.getElementById(titleId).value = '';
+            document.getElementById(linkId).value = '';
+            
+            // 🔄 تحديث تلقائي فوري
             loadAdminData();
+            alert("تمت الإضافة بنجاح!");
         }
 
         async function deleteContent(type, title) {
@@ -299,8 +310,8 @@
                         method: 'POST',
                         body: JSON.stringify({ action: "toggleAttendance", grade: currentGrade, subject: subject, lectureCode: lectureCode, isOpen: true })
                     });
-                    alert("🟢 تم فتح المحاضرة وحفظ إحداثيات الـ GPS!");
                     loadAdminData();
+                    alert("🟢 تم فتح المحاضرة وحفظ إحداثيات الـ GPS!");
                 }, (err) => {
                     alert("⚠️ يجب السماح بالوصول لموقع GPS!");
                 });
@@ -313,8 +324,8 @@
                     method: 'POST',
                     body: JSON.stringify({ action: "archiveLecture", grade: currentGrade, subject: subject })
                 });
-                alert("🔴 تم إغلاق المحاضرة والأرشيف!");
                 loadAdminData();
+                alert("🔴 تم إغلاق المحاضرة والأرشيف!");
             }
         }
     </script>
