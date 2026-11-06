@@ -3,256 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الشاملة للإدارة</title>
+    <title>إدارة الفرقة الأكاديمية</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container" style="max-width: 950px; text-align: right;">
-        <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--accent-red);">🔐 لوحة الإدارة العليا (تحكم كامل)</div>
-        <h2 style="font-size: 1.5rem; margin-bottom: 20px;">نظام التحكم السحابي الشامل</h2>
+    <div class="container" style="max-width: 900px; text-align: right;">
+        <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--accent-red);">🔐 لوحة الإدارة المركزية</div>
+        <h2 id="adminTitleHeader">إدارة الفرقة: ...</h2>
+        <p style="color: var(--text-sub);">كل ما ترفعه هنا يخص هذه الفرقة وحدها ولن يراه طلاب الفرص الأخرى.</p>
 
-        <!-- 1. رفع الكتب والمقررات الدراسية لتظهر فوراً في لوحة الطالب -->
+        <!-- 1. رفع الكتب -->
         <div class="card">
-            <h3 style="color: #f59e0b;">📤 رفع المقررات والكتب الدراسية للطلاب</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px;">
-                <select id="contentGrade" style="padding: 10px;">
-                    <option value="الفرقة الأولى">الفرقة الأولى</option>
-                    <option value="الفرقة الثانية">الفرقة الثانية</option>
-                    <option value="الفرقة الثالثة">الفرقة الثالثة</option>
-                    <option value="الفرقة الرابعة">الفرقة الرابعة</option>
-                </select>
-                <input type="text" id="contentTitle" placeholder="اسم الكتاب أو المقرر">
-                <input type="text" id="contentLink" placeholder="رابط التحميل (Google Drive)">
+            <h3 style="color: #f59e0b;">📚 رفع كتاب أو مرجع (PDF / Drive)</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="bookTitle" placeholder="اسم الكتاب">
+                <input type="text" id="bookLink" placeholder="رابط التحميل">
             </div>
-            <button class="btn" onclick="uploadBookToCloud()" style="background: #f59e0b;">رفع المقرر للسحابة</button>
+            <button class="btn" onclick="uploadItem('book')" style="background: #f59e0b;">رفع الكتاب للفرقة</button>
         </div>
 
-        <!-- 2. إدارة المواد وحالة الحضور (نظامك الأصلي) -->
+        <!-- 2. رفع جداول المحاضرات -->
         <div class="card">
-            <h3 style="color: #38bdf8;">📚 إدارة المواد والمحاضرة والحضور</h3>
-            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                <input type="text" id="newSubjectInput" placeholder="أدخل اسم مادة جديدة..." style="flex: 2;">
-                <button class="btn" onclick="addNewSubject()" style="flex: 1; background: #10b981; margin-top: 0;">➕ إضافة مادة</button>
+            <h3 style="color: #38bdf8;">📅 رفع جدول المحاضرات</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="schTitle" placeholder="عنوان الجدول">
+                <input type="text" id="schLink" placeholder="رابط الجدول">
             </div>
-            <div class="input-group">
-                <label>المادة المفعلة حالياً لتسجيل الحضور:</label>
-                <select id="adminSubjectSelect" style="margin-bottom: 8px;"></select>
-                <button class="btn" onclick="deleteSelectedSubject()" style="background: var(--accent-red); padding: 6px; font-size: 0.8rem; width: auto;">🗑️ حذف المادة</button>
-            </div>
-            <div class="input-group">
-                <label>عنوان المحاضرة الحالية:</label>
-                <input type="text" id="adminCurrentSubject" placeholder="مثال: المحاضرة الأولى">
-            </div>
-            <button class="btn" onclick="saveSubjectAndSettings()" style="background: #4f46e5; margin-bottom: 12px;">💾 حفظ إعدادات المادة سحابياً</button>
-            
-            <div>
-                <button id="btnToggleAttendance" class="btn" onclick="toggleAttendanceState()" style="background: var(--accent-green);">🟢 فتح / إغلاق الحضور للطلاب</button>
-                <p id="attendanceStatusIndicator" style="margin-top: 8px; font-weight: bold; font-size: 0.85rem;"></p>
-            </div>
+            <button class="btn" onclick="uploadItem('schedule')" style="background: #38bdf8;">رفع جدول المحاضرات</button>
         </div>
 
-        <!-- 3. إضافة طالب يدوياً وتوليد كود جامعي -->
+        <!-- 3. رفع جداول الاختبارات -->
         <div class="card">
-            <h3 style="color: #10b981;">👤 إضافة طالب جديد يدوياً</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 12px;">
-                <input type="text" id="manualName" placeholder="اسم الطالب الثلاثي">
-                <input type="text" id="manualPhone" placeholder="رقم الهاتف">
-                <select id="manualGrade">
-                    <option value="الفرقة الأولى">الفرقة الأولى</option>
-                    <option value="الفرقة الثانية">الفرقة الثانية</option>
-                    <option value="الفرقة الثالثة">الفرقة الثالثة</option>
-                    <option value="الفرقة الرابعة">الفرقة الرابعة</option>
-                </select>
-                <input type="text" id="manualPassword" placeholder="كلمة السر">
+            <h3 style="color: #10b981;">📝 رفع جدول الاختبارات</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="examTitle" placeholder="عنوان جدول الامتحانات">
+                <input type="text" id="examLink" placeholder="رابط الجدول">
             </div>
-            <button class="btn" onclick="addStudentManual()" style="background: #10b981;">➕ توليد كود وحفظ الطالب بالسحابة</button>
+            <button class="btn" onclick="uploadItem('exam')" style="background: #10b981;">رفع جدول الامتحانات</button>
         </div>
 
-        <!-- 4. سجل الحضور الحي والأرشيف -->
+        <!-- 4. إرسال إعلان للدفعة -->
         <div class="card">
-            <h3 style="color: #10b981;">📊 سجل الحضور الحي والأرشيف</h3>
-            <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="loadLiveAttendanceLog()" style="flex: 1; margin-top:0;">🔄 تحديث السجل الحي</button>
-                <button class="btn" onclick="endLectureAndExport()" style="background: var(--accent-red); flex: 1; margin-top:0;">🛑 إنهاء وأرشفة المحاضرة</button>
-            </div>
-            <div id="liveAttendanceContainer" style="overflow-x: auto; max-height: 250px;">
-                <p style="color: var(--text-sub);">جاري التحميل...</p>
+            <h3 style="color: #a855f7;">📢 إرسال إعلان أو تنبيه أو لينك جروب</h3>
+            <textarea id="adminAnnouncement" placeholder="اكتب الرسالة هنا..." rows="3" style="width:100%; padding:10px; background:#030712; color:#fff; border-radius:8px; border:1px solid var(--border-color); margin-bottom:10px;"></textarea>
+            <button class="btn" onclick="sendAnnouncement()" style="background: #a855f7;">نشر الإعلان للدفعة</button>
+        </div>
+
+        <!-- 5. الشكاوى الواردة -->
+        <div class="card">
+            <h3 style="color: var(--accent-red);">✉️ الشكاوى الواردة من طلاب هذه الفرقة</h3>
+            <div id="complaintsContainer" style="max-height: 200px; overflow-y: auto;">
+                <p style="color: var(--text-sub);">جاري جلب الشكاوى...</p>
             </div>
         </div>
 
-        <!-- 5. إدارة بيانات الطلاب بالكامل (تعديل وحذف) -->
-        <div class="card">
-            <h3 style="color: #38bdf8;">📋 قاعدة بيانات الطلاب المسجلين</h3>
-            <button class="btn btn-secondary" onclick="loadStudentsList()" style="margin-bottom: 10px; width: auto; padding: 8px 15px;">🔄 تحديث القائمة</button>
-            <div id="studentsTableContainer" style="overflow-x: auto; max-height: 300px;">
-                <p style="color: var(--text-sub);">جاري التحميل...</p>
-            </div>
-        </div>
-
-        <p id="adminStatusMsg" class="status-msg"></p>
-        <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-top: 15px;">العودة للرئيسية</button>
+        <button class="btn btn-secondary" onclick="window.location.href='admin-select.html'" style="margin-top: 15px;">⬅️ العودة لاختيار فرقة أخرى</button>
     </div>
 
+    <script src="script.js"></script>
     <script>
-        const googleScriptUrl = "https://script.google.com/macros/s/AKfycbzEV1GmmdHgVFy8f2jmZSQFZmH3_BOBSlMsI6_nsB4EhgJABQv6IxgBVXVBUEHHyXVO-w/exec";
-        let currentAttendanceState = "true";
+        const currentGrade = localStorage.getItem('adminSelectedGrade') || "الفرقة الأولى";
+        document.getElementById('adminTitleHeader').textContent = `إدارة الفرقة: ${currentGrade}`;
 
-        window.onload = async function() {
-            const pass = prompt("🔐 أدخل الرقم السري للإدارة:");
-            if (pass !== "44554455") {
-                alert("❌ الرقم السري غير صحيح!");
-                window.location.href = 'index.html';
-                return;
-            }
-            loadSubjectsIntoAdminDropdown();
-            loadLiveAttendanceLog();
-            loadStudentsList();
-        };
+        async function uploadItem(type) {
+            let titleId = type === 'book' ? 'bookTitle' : (type === 'schedule' ? 'schTitle' : 'examTitle');
+            let linkId = type === 'book' ? 'bookLink' : (type === 'schedule' ? 'schLink' : 'examLink');
+            
+            let title = document.getElementById(titleId).value.trim();
+            let link = document.getElementById(linkId).value.trim();
 
-        async function uploadBookToCloud() {
-            const grade = document.getElementById('contentGrade').value;
-            const title = document.getElementById('contentTitle').value.trim();
-            const link = document.getElementById('contentLink').value.trim();
-            if(!title || !link) { alert("أكمل البيانات أولاً"); return; }
+            if(!title || !link) { alert("أكمل البيانات"); return; }
 
-            alert("جاري رفع المقرر للسحابة...");
+            alert("جاري الرفع للسحابة...");
             await fetch(googleScriptUrl, {
                 method: 'POST',
-                body: JSON.stringify({ action: "addContent", type: "book", grade: grade, title: title, link: link })
-            });
-            alert("✅ تم رفع المقرر بنجاح ليظهر في لوحة الطالب!");
-            document.getElementById('contentTitle').value = '';
-            document.getElementById('contentLink').value = '';
+                body: JSON.stringify({ action: "addGradeContent", grade: currentGrade, type: type, title: title, link: link })
+            }).catch(()=>{});
+            
+            alert("✅ تم الرفع بنجاح!");
+            document.getElementById(titleId).value = '';
+            document.getElementById(linkId).value = '';
         }
 
-        function generateStudentID() { return 'AZ' + Math.floor(100000 + Math.random() * 900000); }
-
-        function getSavedSubjects() {
-            let subs = JSON.parse(localStorage.getItem('customSubjectsList'));
-            if (!subs || !Array.isArray(subs)) {
-                subs = ["نشأة وسائل الاتصال - د. مصطفى مندي"];
-                localStorage.setItem('customSubjectsList', JSON.stringify(subs));
-            }
-            return subs;
-        }
-
-        function loadSubjectsIntoAdminDropdown() {
-            const select = document.getElementById('adminSubjectSelect');
-            const subs = getSavedSubjects();
-            select.innerHTML = "";
-            subs.forEach(sub => {
-                const opt = document.createElement('option');
-                opt.value = sub;
-                opt.textContent = sub;
-                select.appendChild(opt);
-            });
-        }
-
-        function addNewSubject() {
-            const input = document.getElementById('newSubjectInput');
-            const val = input.value.trim();
-            if(!val) return;
-            let subs = getSavedSubjects();
-            subs.push(val);
-            localStorage.setItem('customSubjectsList', JSON.stringify(subs));
-            input.value = "";
-            loadSubjectsIntoAdminDropdown();
-            alert("✔️ تمت إضافة المادة بنجاح!");
-        }
-
-        function deleteSelectedSubject() {
-            const select = document.getElementById('adminSubjectSelect');
-            let subs = getSavedSubjects();
-            subs = subs.filter(s => s !== select.value);
-            localStorage.setItem('customSubjectsList', JSON.stringify(subs));
-            loadSubjectsIntoAdminDropdown();
-            alert("🗑️ تم حذف المادة!");
-        }
-
-        async function saveSubjectAndSettings() {
+        async function sendAnnouncement() {
+            let msg = document.getElementById('adminAnnouncement').value.trim();
+            if(!msg) return;
+            alert("جاري النشر...");
             await fetch(googleScriptUrl, {
                 method: 'POST',
-                body: JSON.stringify({
-                    action: "saveSettings",
-                    selectedSubject: document.getElementById('adminSubjectSelect').value,
-                    currentSubject: document.getElementById('adminCurrentSubject').value || "المحاضرة الأولى",
-                    isAttendanceOpen: currentAttendanceState
-                })
-            });
-            alert("✅ تم حفظ الإعدادات بنجاح!");
+                body: JSON.stringify({ action: "sendAnnouncement", grade: currentGrade, message: msg })
+            }).catch(()=>{});
+            alert("📢 تم نشر الإعلان للدفعة بنجاح!");
+            document.getElementById('adminAnnouncement').value = '';
         }
 
-        async function toggleAttendanceState() {
-            currentAttendanceState = currentAttendanceState === "true" ? "false" : "true";
-            await saveSubjectAndSettings();
-            updateIndicator();
-        }
-
-        function updateIndicator() {
-            const ind = document.getElementById('attendanceStatusIndicator');
-            ind.textContent = currentAttendanceState === "true" ? "🟢 تسجيل الحضور مفتوح حالياً." : "🔴 تسجيل الحضور مغلق حالياً.";
-        }
-
-        async function addStudentManual() {
-            const name = document.getElementById('manualName').value.trim();
-            const phone = document.getElementById('manualPhone').value.trim();
-            const grade = document.getElementById('manualGrade').value;
-            const password = document.getElementById('manualPassword').value.trim();
-            if(!name || !phone || !password) { alert("أكمل البيانات"); return; }
-
-            const newId = generateStudentID();
-            await fetch(googleScriptUrl, {
-                method: 'POST',
-                body: JSON.stringify({ action: "createStudent", id: newId, name, phone, grade, password, boundDeviceId: "ADMIN" })
-            });
-            alert(`🎉 تمت إضافة الطالب!\nالكود: ${newId}\nكلمة السر: ${password}`);
-            loadStudentsList();
-        }
-
-        async function loadLiveAttendanceLog() {
-            const container = document.getElementById('liveAttendanceContainer');
+        async function loadComplaints() {
             try {
-                const res = await fetch(`${googleScriptUrl}?action=getLiveAttendance`);
+                const res = await fetch(`${googleScriptUrl}?action=getComplaints&grade=${currentGrade}`);
                 const data = await res.json();
-                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد سجلات حضور حالياً.</p>"; return; }
-                let html = `<table><tr><th>ID</th><th>الاسم</th><th>الفرقة</th><th>المادة</th><th>الوقت</th><th>موقع</th></tr>`;
-                data.forEach(r => {
-                    html += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.grade}</td><td>${r.subject}</td><td>${r.time}</td><td><a href="${r.locationLink}" target="_blank" style="color:#10b981;">خريطة</a></td></tr>`;
-                });
-                html += `</table>`;
-                container.innerHTML = html;
-            } catch(e) { container.innerHTML = "<p>خطأ في الجلب.</p>"; }
+                const container = document.getElementById('complaintsContainer');
+                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد شكاوى مسجلة.</p>"; return; }
+                container.innerHTML = data.map(c => `<div style="padding:10px; background:rgba(255,255,255,0.03); border-radius:8px; margin-bottom:8px;"><span style="color:#38bdf8; font-weight:bold;">${c.name} (${c.id}):</span><p style="margin:5px 0; font-size:0.9rem;">${c.text}</p></div>`).join('');
+            } catch(e) {}
         }
-
-        async function endLectureAndExport() {
-            if(confirm("إنهاء المحاضرة وأرشفة الحضور؟")) {
-                await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "endLecture", lectureName: "محاضرة عامة", date: new Date().toLocaleString() }) });
-                alert("📊 تمت الأرشفة بنجاح!");
-                loadLiveAttendanceLog();
-            }
-        }
-
-        async function loadStudentsList() {
-            const container = document.getElementById('studentsTableContainer');
-            try {
-                const res = await fetch(`${googleScriptUrl}?action=getStudents`);
-                const data = await res.json();
-                if(data.length === 0) { container.innerHTML = "<p style='color:var(--text-sub);'>لا توجد بيانات طلاب.</p>"; return; }
-                let html = `<table><tr><th>ID</th><th>الاسم</th><th>الهاتف</th><th>الفرقة</th><th>كلمة السر</th><th>حذف</th></tr>`;
-                data.forEach(s => {
-                    html += `<tr><td style="color:#38bdf8;">${s.id}</td><td>${s.name}</td><td>${s.phone}</td><td>${s.grade}</td><td>${s.password}</td><td><button onclick="deleteStudent('${s.id}')" style="background:var(--accent-red); color:#fff; border:none; padding:4px 8px; border-radius:4px;">حذف</button></td></tr>`;
-                });
-                html += `</table>`;
-                container.innerHTML = html;
-            } catch(e) { container.innerHTML = "<p>خطأ في التحميل.</p>"; }
-        }
-
-        async function deleteStudent(id) {
-            if(confirm(`حذف الطالب ${id}؟`)) {
-                await fetch(googleScriptUrl, { method: 'POST', body: JSON.stringify({ action: "deleteStudent", id: id }) });
-                loadStudentsList();
-            }
-        }
+        loadComplaints();
     </script>
 </body>
 </html>
